@@ -780,6 +780,86 @@
   .rating-section .intro { text-align: center; max-width: 520px; margin: 0 auto 40px; }
   .rating-section .intro h2 { margin-bottom: 12px; }
 
+  /* Top raters leaderboard */
+  .raters-leaderboard {
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    padding: clamp(18px, 3vw, 26px) clamp(20px, 3.5vw, 32px);
+    margin-bottom: 28px;
+    border-radius: var(--radius);
+  }
+  .raters-leaderboard[hidden] { display: none; }
+  .lb-head {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent-deep);
+    font-weight: 600;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .lb-head .lb-icon { color: var(--gold); font-size: 14px; }
+  .lb-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 2px;
+  }
+  .lb-list li {
+    display: grid;
+    grid-template-columns: 28px 1fr auto;
+    align-items: baseline;
+    gap: 14px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--line-soft);
+    font-size: 14.5px;
+  }
+  .lb-list li:last-child { border-bottom: none; }
+  .lb-list .lb-rank {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-3);
+    letter-spacing: 0.06em;
+    font-weight: 500;
+  }
+  .lb-list .lb-rank.medal { color: var(--gold); font-weight: 700; font-size: 13px; }
+  .lb-list .lb-name {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: 16px;
+    color: var(--ink);
+    font-variation-settings: "opsz" 72;
+  }
+  .lb-list .lb-name.is-you {
+    color: var(--accent-deep);
+  }
+  .lb-list .lb-name.is-you::after {
+    content: ' · you';
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-4);
+  }
+  .lb-list .lb-count {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent-deep);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .lb-list .lb-count em {
+    font-style: normal;
+    color: var(--ink-4);
+    font-weight: 400;
+    margin-left: 4px;
+  }
+
   .section-nav {
     display: flex;
     align-items: center;
@@ -822,6 +902,92 @@
     padding: clamp(20px, 3.5vw, 32px);
     margin-bottom: 16px;
     border-radius: var(--radius);
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+  }
+  .rate-card.flash {
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+
+  /* Rank bar at top of rate card */
+  .rc-rank-bar {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 18px;
+    align-items: center;
+    padding: clamp(14px, 2.5vw, 18px) clamp(18px, 3.5vw, 24px);
+    background: var(--accent-soft);
+    border: 1px solid #a7f3d0;
+    border-radius: var(--radius) var(--radius) 0 0;
+    margin: calc(-1 * clamp(20px, 3.5vw, 32px)) calc(-1 * clamp(20px, 3.5vw, 32px)) clamp(18px, 3vw, 22px);
+    transition: background 0.3s ease, border-color 0.3s ease;
+  }
+  .rc-rank-bar.unrated {
+    background: var(--surface-2);
+    border-color: var(--line);
+  }
+  .rc-rank {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: clamp(28px, 5vw, 38px);
+    color: var(--accent-deep);
+    letter-spacing: -0.02em;
+    line-height: 1;
+    font-variation-settings: "opsz" 144;
+    min-width: 56px;
+  }
+  .rc-rank.unrated { color: var(--ink-4); font-weight: 400; font-size: clamp(20px, 4vw, 28px); }
+
+  .rc-score {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .rc-score-stars {
+    font-size: clamp(18px, 3vw, 24px);
+    color: var(--gold);
+    line-height: 1;
+    letter-spacing: 1px;
+  }
+  .rc-score-stars.unrated { color: var(--ink-4); }
+  .rc-score-num {
+    font-family: var(--display);
+    font-size: clamp(22px, 3.5vw, 28px);
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1;
+    font-variation-settings: "opsz" 72;
+  }
+  .rc-score-meta {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-3);
+    letter-spacing: 0.08em;
+  }
+  .rc-stop-badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    white-space: nowrap;
+  }
+
+  @media (max-width: 540px) {
+    .rc-rank-bar {
+      grid-template-columns: auto 1fr;
+      gap: 12px;
+    }
+    .rc-stop-badge {
+      grid-column: 1 / -1;
+      text-align: right;
+      padding-top: 2px;
+      border-top: 1px solid #a7f3d0;
+      padding-top: 8px;
+      margin-top: 2px;
+    }
+    .rc-rank-bar.unrated .rc-stop-badge { border-top-color: var(--line); }
   }
   .rc-header {
     display: flex;
@@ -1298,6 +1464,14 @@
       <a href="#crawl">Guide</a>
     </nav>
 
+    <div id="raters-leaderboard" class="raters-leaderboard" hidden>
+      <div class="lb-head">
+        <span class="lb-icon">★</span>
+        <span>Top raters</span>
+      </div>
+      <ol id="lb-list" class="lb-list"></ol>
+    </div>
+
     <div id="rate-cards-container"></div>
 
     <nav class="section-nav bottom">
@@ -1484,7 +1658,7 @@
         <p class="stop-strategy">${esc(stop.strategy)}</p>
         <div class="stop-foot">
           <a href="#rate-${stop.order_index}">★ Rate this stop</a>
-          <a href="#map">View on map ↗</a>
+          <a href="${mapsLink(stop.address)}" target="_blank" rel="noopener">Open in Google Maps ↗</a>
         </div>
       </article>
     `;
@@ -1520,15 +1694,23 @@
   function renderRateCard(stop) {
     return `
       <article id="rate-${stop.order_index}" class="rate-card loaded" data-stop-id="${stop.id}" style="scroll-margin-top: calc(var(--nav-h) + 24px);">
+        <div class="rc-rank-bar unrated">
+          <div class="rc-rank unrated">—</div>
+          <div class="rc-score">
+            <span class="rc-score-stars unrated">☆☆☆☆☆</span>
+            <span class="rc-score-meta">Be the first to rate</span>
+          </div>
+          <div class="rc-stop-badge">Stop ${String(stop.order_index).padStart(2, '0')}</div>
+        </div>
+
         <header class="rc-header">
           <div class="rc-title">
-            <span class="rc-num">Stop ${String(stop.order_index).padStart(2, '0')}</span>
             <h3 class="rc-name">${esc(stop.name)}</h3>
             <span class="rc-cuisine">${esc(stop.cuisine)}</span>
           </div>
           <div class="rc-links">
             <a href="#stop-${stop.order_index}">Guide ↗</a>
-            <a href="#map">Map ↗</a>
+            <a href="${mapsLink(stop.address)}" target="_blank" rel="noopener">Google Maps ↗</a>
           </div>
         </header>
 
@@ -1618,6 +1800,109 @@
         }
       }
     }
+  }
+
+  // ============== RANKING + LEADERBOARD ==============
+  // Compute rank of each stop. Stops with no ratings sort last (in route order).
+  function rankStops(stops, byStop) {
+    return stops.map((s) => {
+      const ratings = byStop.get(s.id) || [];
+      return {
+        stop: s,
+        count: ratings.length,
+        avg: ratings.length ? ratings.reduce((acc, r) => acc + r.rating, 0) / ratings.length : null,
+      };
+    }).sort((a, b) => {
+      if (a.avg !== null && b.avg === null) return -1;
+      if (a.avg === null && b.avg !== null) return 1;
+      if (a.avg === null && b.avg === null) return a.stop.order_index - b.stop.order_index;
+      if (b.avg !== a.avg) return b.avg - a.avg;
+      if (b.count !== a.count) return b.count - a.count;
+      return a.stop.order_index - b.stop.order_index;
+    });
+  }
+
+  // Update the rank bar at the top of each rate card
+  function updateRankBars(ranked) {
+    ranked.forEach((r, idx) => {
+      const card = document.querySelector(`.rate-card[data-stop-id="${r.stop.id}"]`);
+      if (!card) return;
+      const bar = card.querySelector('.rc-rank-bar');
+      const rankEl = card.querySelector('.rc-rank');
+      const scoreEl = card.querySelector('.rc-score');
+      if (!bar || !rankEl || !scoreEl) return;
+
+      if (r.avg === null) {
+        bar.classList.add('unrated');
+        rankEl.classList.add('unrated');
+        rankEl.textContent = '—';
+        scoreEl.innerHTML = `
+          <span class="rc-score-stars unrated">☆☆☆☆☆</span>
+          <span class="rc-score-meta">Be the first to rate</span>
+        `;
+      } else {
+        bar.classList.remove('unrated');
+        rankEl.classList.remove('unrated');
+        rankEl.textContent = `#${idx + 1}`;
+        scoreEl.innerHTML = `
+          <span class="rc-score-stars">${starsString(r.avg)}</span>
+          <span class="rc-score-num">${r.avg.toFixed(1)}</span>
+          <span class="rc-score-meta">${r.count} rating${r.count === 1 ? '' : 's'}</span>
+        `;
+      }
+    });
+  }
+
+  // Physically reorder rate cards in the DOM by rank.
+  // Skip if a user is currently typing or interacting with an input/textarea
+  // inside a rate card — would be disruptive.
+  function reorderRateCards(ranked) {
+    const active = document.activeElement;
+    if (active && active.closest('.rate-card') &&
+        (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA')) {
+      return; // user is typing, defer reorder
+    }
+    const container = document.getElementById('rate-cards-container');
+    if (!container) return;
+    ranked.forEach((r) => {
+      const card = container.querySelector(`.rate-card[data-stop-id="${r.stop.id}"]`);
+      if (card) container.appendChild(card); // move to end of container; final order matches rank
+    });
+  }
+
+  // Top raters: count ratings per rater_name and render
+  function renderRatersLeaderboard(allRatings) {
+    const counts = new Map();
+    for (const r of allRatings) {
+      const name = (r.rater_name || '').trim() || 'Anonymous';
+      counts.set(name, (counts.get(name) || 0) + 1);
+    }
+    const sorted = [...counts.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 6);
+
+    const lbEl = document.getElementById('raters-leaderboard');
+    const listEl = document.getElementById('lb-list');
+    if (!lbEl || !listEl) return;
+
+    if (!sorted.length) {
+      lbEl.hidden = true;
+      return;
+    }
+
+    lbEl.hidden = false;
+    listEl.innerHTML = sorted.map(([name, count], idx) => {
+      const medal = idx < 3 ? ' medal' : '';
+      const youCls = (currentName && name === currentName) ? ' is-you' : '';
+      const rankMark = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : (idx + 1);
+      return `
+        <li>
+          <span class="lb-rank${medal}">${rankMark}</span>
+          <span class="lb-name${youCls}">${esc(name)}</span>
+          <span class="lb-count">${count}<em>rating${count === 1 ? '' : 's'}</em></span>
+        </li>
+      `;
+    }).join('');
   }
 
   // ============== PHOTO UPLOAD ==============
@@ -1758,6 +2043,13 @@
       submitBtn.disabled = true;
       addBtn.disabled = false;
 
+      // Move focus away so reorderRateCards isn't blocked
+      submitBtn.blur();
+
+      // Brief flash to highlight the change before the reorder
+      card.classList.add('flash');
+      setTimeout(() => card.classList.remove('flash'), 1200);
+
       // Persist a hint that name was used (in case it changed)
       if (nameEl.value.trim()) {
         const cur = getAuth() || {};
@@ -1804,6 +2096,8 @@
   }
 
   // ============== BOOT ==============
+  let allStops = [];
+
   async function loadStops() {
     const { data: stops, error } = await sb
       .from('stops')
@@ -1815,6 +2109,8 @@
       $('#stops-container').innerHTML = `<p style="text-align:center;color:var(--red)">Couldn't load stops from the database. Refresh to try again.</p>`;
       return null;
     }
+
+    allStops = stops;
 
     // Render stops with walks and detour
     const parts = [];
@@ -1846,7 +2142,20 @@
       .select('stop_id, rating, comment, rater_name, photo_urls, created_at')
       .order('created_at', { ascending: false });
     if (error) { console.error(error); return; }
-    updateRatingDisplays(aggregate(data || []));
+
+    const ratings = data || [];
+    const byStop = aggregate(ratings);
+
+    // Existing: tiny rating badges on stop cards + recent lists in rate cards
+    updateRatingDisplays(byStop);
+
+    // New: live standings on rate cards + reorder by rank + raters leaderboard
+    if (allStops.length) {
+      const ranked = rankStops(allStops, byStop);
+      updateRankBars(ranked);
+      reorderRateCards(ranked);
+    }
+    renderRatersLeaderboard(ratings);
   }
 
   (async () => {
