@@ -18,33 +18,28 @@
     --bg: #fafafa;
     --surface: #ffffff;
     --surface-2: #f5f5f4;
-
     --ink: #0a0a0a;
     --ink-2: #404040;
     --ink-3: #737373;
     --ink-4: #a3a3a3;
-
     --line: #e5e5e5;
     --line-soft: #f0f0f0;
-
     --accent: #047857;
     --accent-deep: #064e3b;
     --accent-soft: #ecfdf5;
-
     --gold: #ca8a04;
     --red: #dc2626;
     --red-soft: #fef2f2;
-
     --display: 'Fraunces', 'Times New Roman', serif;
     --sans: 'DM Sans', system-ui, -apple-system, sans-serif;
     --mono: 'JetBrains Mono', ui-monospace, monospace;
-
     --pad: clamp(20px, 5vw, 56px);
     --radius: 6px;
+    --nav-h: 56px;
   }
 
   *, *::before, *::after { box-sizing: border-box; }
-  html { -webkit-text-size-adjust: 100%; }
+  html { -webkit-text-size-adjust: 100%; scroll-padding-top: calc(var(--nav-h) + 16px); }
 
   body {
     margin: 0;
@@ -56,6 +51,7 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+  body.gated { overflow: hidden; }
   ::selection { background: var(--accent); color: var(--surface); }
 
   .wrap { max-width: 760px; margin: 0 auto; padding: 0 var(--pad); }
@@ -64,9 +60,208 @@
   a { color: inherit; text-decoration-color: var(--accent); text-underline-offset: 4px; text-decoration-thickness: 1px; }
   a:hover { color: var(--accent-deep); }
 
-  /* MASTHEAD */
+  /* ========================================
+     PASSWORD/NAME GATE
+     ======================================== */
+  .gate {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--pad);
+    overflow-y: auto;
+  }
+  .gate[hidden] { display: none; }
+  .gate::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(at 20% 10%, rgba(4, 120, 87, 0.06), transparent 40%),
+      radial-gradient(at 80% 90%, rgba(4, 120, 87, 0.04), transparent 40%);
+    pointer-events: none;
+  }
+  .gate-card {
+    position: relative;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: clamp(32px, 6vw, 56px);
+    max-width: 480px;
+    width: 100%;
+    box-shadow: 0 20px 60px -20px rgba(0,0,0,0.12);
+    text-align: center;
+  }
+  .gate-eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+    font-weight: 500;
+  }
+  .gate-title {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(28px, 5vw, 38px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin: 0 0 16px;
+    color: var(--ink);
+    font-variation-settings: "opsz" 144;
+  }
+  .gate-title em { font-style: italic; font-weight: 300; color: var(--accent-deep); }
+  .gate-desc {
+    color: var(--ink-3);
+    font-size: 15px;
+    margin: 0 0 28px;
+    line-height: 1.55;
+  }
+  .gate-stage { animation: fadeIn 0.3s ease both; }
+  .gate-stage[hidden] { display: none; }
+
+  .gate-input {
+    width: 100%;
+    font-family: var(--sans);
+    font-size: 16px;
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    border-radius: 6px;
+    margin-bottom: 12px;
+    transition: border-color 0.15s ease;
+    text-align: center;
+  }
+  .gate-input:focus { outline: none; border-color: var(--accent); }
+  .gate-input.shake { animation: shake 0.4s ease; border-color: var(--red); }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-6px); }
+    40%, 80% { transform: translateX(6px); }
+  }
+
+  .gate-error {
+    color: var(--red);
+    font-size: 13px;
+    margin-bottom: 12px;
+    min-height: 18px;
+  }
+  .gate-error[hidden] { visibility: hidden; }
+
+  .gate-btn {
+    width: 100%;
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 500;
+    background: var(--ink);
+    color: var(--surface);
+    border: none;
+    padding: 14px 24px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  .gate-btn:hover { background: var(--accent-deep); }
+  .gate-btn:disabled { background: var(--ink-4); cursor: not-allowed; }
+
+  .gate-foot {
+    margin-top: 24px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--ink-4);
+    text-transform: uppercase;
+  }
+
+  /* ========================================
+     TOP NAV
+     ======================================== */
+  .topnav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: saturate(180%) blur(12px);
+    -webkit-backdrop-filter: saturate(180%) blur(12px);
+    border-bottom: 1px solid var(--line);
+    height: var(--nav-h);
+    display: flex;
+    align-items: center;
+    padding: 0 var(--pad);
+  }
+  .topnav[hidden] { display: none; }
+  .topnav-inner {
+    width: 100%;
+    max-width: 1040px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .topnav .brand {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: 16px;
+    color: var(--ink);
+    text-decoration: none;
+    letter-spacing: -0.01em;
+    font-variation-settings: "opsz" 72;
+    white-space: nowrap;
+  }
+  .topnav .brand em { font-style: italic; font-weight: 400; color: var(--accent-deep); }
+  .topnav .links {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .topnav .links a {
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-2);
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 999px;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .topnav .links a:hover { background: var(--surface-2); color: var(--ink); }
+  .topnav .links a.primary {
+    background: var(--ink);
+    color: var(--surface);
+  }
+  .topnav .links a.primary:hover { background: var(--accent-deep); }
+  .topnav .hello {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--ink-3);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-right: 4px;
+    white-space: nowrap;
+  }
+  .topnav .hello strong { color: var(--ink); font-weight: 500; }
+  @media (max-width: 600px) {
+    .topnav .brand { font-size: 14px; }
+    .topnav .hello { display: none; }
+    .topnav .links a { padding: 7px 10px; font-size: 12px; }
+    .topnav .links a:not(.primary) { padding: 7px 8px; }
+  }
+  @media (max-width: 380px) {
+    .topnav .brand-full { display: none; }
+    .topnav .brand::before { content: '★ Food Crawl'; }
+  }
+
+  /* ========================================
+     MASTHEAD
+     ======================================== */
   header.masthead {
-    padding: clamp(56px, 9vw, 120px) 0 clamp(40px, 6vw, 72px);
+    padding: clamp(48px, 8vw, 96px) 0 clamp(40px, 6vw, 72px);
     text-align: center;
     background: var(--surface);
     border-bottom: 1px solid var(--line);
@@ -83,7 +278,7 @@
   h1.title {
     font-family: var(--display);
     font-weight: 400;
-    font-size: clamp(44px, 9vw, 96px);
+    font-size: clamp(40px, 8vw, 88px);
     line-height: 0.96;
     letter-spacing: -0.03em;
     margin: 0 0 28px;
@@ -147,14 +342,15 @@
     color: var(--ink-3);
     margin-top: 10px;
   }
-
   @media (max-width: 540px) {
     .stats { grid-template-columns: repeat(2, 1fr); }
     .stats > div:nth-child(2) { border-right: none; }
     .stats > div:nth-child(1), .stats > div:nth-child(2) { border-bottom: 1px solid var(--line); }
   }
 
-  /* SECTIONS */
+  /* ========================================
+     SECTIONS
+     ======================================== */
   section { padding: clamp(56px, 8vw, 96px) 0; }
   .section-label {
     font-family: var(--mono);
@@ -175,7 +371,6 @@
     font-variation-settings: "opsz" 144;
   }
   h2.section-head em { font-style: italic; font-weight: 300; }
-
   p.lede {
     font-family: var(--sans);
     font-size: clamp(18px, 2.2vw, 21px);
@@ -185,7 +380,9 @@
   }
   p.lede strong { color: var(--ink); font-weight: 600; }
 
-  /* MAP */
+  /* ========================================
+     MAP
+     ======================================== */
   .map-section {
     padding: clamp(40px, 6vw, 72px) 0;
     background: var(--surface);
@@ -234,26 +431,15 @@
     border: 2px solid var(--surface);
     box-shadow: 0 2px 8px rgba(0,0,0,0.18);
   }
-  .leaflet-popup-content-wrapper {
-    border-radius: 4px !important;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.12) !important;
-  }
-  .leaflet-popup-content {
-    margin: 12px 14px !important;
-    font-family: var(--sans) !important;
-    line-height: 1.4 !important;
-  }
-  .leaflet-popup-content .pop-name {
-    font-family: var(--display);
-    font-size: 17px;
-    font-weight: 500;
-    margin-bottom: 2px;
-    color: var(--ink);
-  }
+  .leaflet-popup-content-wrapper { border-radius: 4px !important; box-shadow: 0 4px 20px rgba(0,0,0,0.12) !important; }
+  .leaflet-popup-content { margin: 12px 14px !important; font-family: var(--sans) !important; line-height: 1.4 !important; }
+  .leaflet-popup-content .pop-name { font-family: var(--display); font-size: 17px; font-weight: 500; margin-bottom: 2px; color: var(--ink); }
   .leaflet-popup-content .pop-cuisine { font-size: 13px; color: var(--ink-3); font-style: italic; }
   .leaflet-container a.leaflet-popup-close-button { color: var(--ink-3) !important; }
 
-  /* TIPS */
+  /* ========================================
+     TIPS
+     ======================================== */
   ul.tips { list-style: none; padding: 0; margin: 0; counter-reset: tip; }
   ul.tips li {
     counter-increment: tip;
@@ -278,7 +464,9 @@
   ul.tips li:last-child { border-bottom: none; }
   ul.tips strong { color: var(--ink); font-weight: 600; }
 
-  /* STOPS */
+  /* ========================================
+     STOP CARDS
+     ======================================== */
   .stops-section { background: var(--bg); }
 
   .stop {
@@ -289,8 +477,13 @@
     margin-bottom: 24px;
     position: relative;
     transition: border-color 0.15s ease;
+    scroll-margin-top: calc(var(--nav-h) + 24px);
   }
   .stop:hover { border-color: var(--ink-4); }
+  .stop:target {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
 
   .stop-tag {
     display: inline-block;
@@ -305,7 +498,6 @@
     border-radius: 3px;
     margin-bottom: 20px;
   }
-
   .stop-head {
     display: flex;
     flex-wrap: wrap;
@@ -335,7 +527,6 @@
   }
   .stop-rating .stars { color: var(--gold); letter-spacing: 0; font-size: 14px; margin-right: 4px; }
   .stop-rating.has-ratings { color: var(--ink-2); }
-
   .stop-cuisine {
     font-family: var(--sans);
     font-style: italic;
@@ -355,7 +546,6 @@
   .stop-meta a { text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 1px; }
   .stop-meta a:hover { text-decoration-color: var(--accent-deep); }
   .stop-meta .sep { color: var(--ink-4); margin: 0 8px; }
-
   .stop-warning {
     background: var(--red-soft);
     border: 1px solid #fecaca;
@@ -376,7 +566,6 @@
     color: var(--red);
     text-transform: uppercase;
   }
-
   .stop-row {
     display: grid;
     grid-template-columns: 130px 1fr;
@@ -395,7 +584,6 @@
     font-weight: 500;
   }
   .stop-row dd { margin: 0; font-size: 15.5px; line-height: 1.55; color: var(--ink-2); }
-
   ul.must-order { list-style: none; padding: 0; margin: 0; }
   ul.must-order li {
     padding: 3px 0 3px 20px;
@@ -412,7 +600,6 @@
     height: 1px;
     background: var(--accent);
   }
-
   .stop-strategy {
     font-family: var(--display);
     font-style: italic;
@@ -425,6 +612,25 @@
     border-top: 1px solid var(--line-soft);
     font-variation-settings: "opsz" 72;
   }
+  .stop-foot {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line-soft);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+  }
+  .stop-foot a {
+    color: var(--accent-deep);
+    text-decoration: none;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 2px;
+    transition: border-color 0.15s ease;
+  }
+  .stop-foot a:hover { border-color: var(--accent); }
 
   @media (max-width: 560px) {
     .stop-row { grid-template-columns: 1fr; gap: 6px; padding: 14px 0; }
@@ -508,12 +714,7 @@
   }
 
   /* TABLES */
-  table.guide-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14.5px;
-    margin: 8px 0;
-  }
+  table.guide-table { width: 100%; border-collapse: collapse; font-size: 14.5px; margin: 8px 0; }
   table.guide-table th, table.guide-table td {
     text-align: left;
     padding: 14px 16px 14px 0;
@@ -546,7 +747,6 @@
     white-space: nowrap;
     color: var(--accent);
   }
-
   @media (max-width: 600px) {
     table.guide-table th, table.guide-table td { font-size: 13px; padding: 12px 8px 12px 0; }
     table.guide-table .name-col { font-size: 15px; }
@@ -569,102 +769,141 @@
   .strategy-block ul { padding-left: 18px; margin: 0; color: var(--ink-2); }
   .strategy-block ul li { font-size: 15.5px; margin: 6px 0; }
 
-  /* RATE CTA */
-  .rate-cta {
-    text-align: center;
-    padding: clamp(56px, 8vw, 88px) 0;
+  /* ========================================
+     RATING SECTION
+     ======================================== */
+  .rating-section {
     background: var(--surface);
+    padding: clamp(48px, 8vw, 80px) 0;
     border-top: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
   }
-  .rate-cta h2 {
-    font-family: var(--display);
-    font-weight: 400;
-    font-size: clamp(30px, 5vw, 44px);
-    margin: 0 0 14px;
-    color: var(--ink);
-    letter-spacing: -0.02em;
-    font-variation-settings: "opsz" 144;
-  }
-  .rate-cta h2 em { color: var(--accent-deep); font-style: italic; font-weight: 300; }
-  .rate-cta p {
-    color: var(--ink-3);
-    max-width: 440px;
-    margin: 0 auto 32px;
-    font-size: 16px;
-    line-height: 1.55;
-  }
-
-  .big-btn {
-    font-family: var(--sans);
-    font-size: 14px;
-    font-weight: 500;
-    letter-spacing: 0.02em;
-    background: var(--ink);
-    color: var(--surface);
-    border: none;
-    padding: 16px 32px;
-    border-radius: 999px;
-    cursor: pointer;
-    transition: background 0.15s ease, transform 0.1s ease;
-  }
-  .big-btn:hover { background: var(--accent-deep); }
-  .big-btn:active { transform: translateY(1px); }
-  .big-btn .star { color: var(--gold); margin-right: 8px; }
-  .big-btn.is-open { background: var(--surface-2); color: var(--ink); border: 1px solid var(--line); }
-
-  /* RATING SECTION */
-  .rating-section { background: var(--bg); padding: clamp(56px, 8vw, 88px) 0; }
-  .rating-section[hidden] { display: none; }
   .rating-section .intro { text-align: center; max-width: 520px; margin: 0 auto 40px; }
   .rating-section .intro h2 { margin-bottom: 12px; }
 
+  .section-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    padding: 18px 0;
+    margin-bottom: 32px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    background: var(--bg);
+    border-radius: 999px;
+    flex-wrap: wrap;
+  }
+  .section-nav.bottom { margin-top: 32px; margin-bottom: 0; }
+  .section-nav a {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    text-decoration: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .section-nav a:hover { color: var(--accent-deep); background: var(--accent-soft); }
+  .section-nav .sep {
+    width: 4px; height: 4px;
+    background: var(--ink-4);
+    border-radius: 50%;
+  }
+  @media (max-width: 480px) {
+    .section-nav { gap: 8px; padding: 14px 8px; }
+    .section-nav a { padding: 5px 8px; }
+  }
+
   .rate-card {
-    background: var(--surface);
+    background: var(--bg);
     border: 1px solid var(--line);
-    padding: clamp(20px, 3.5vw, 28px);
+    padding: clamp(20px, 3.5vw, 32px);
     margin-bottom: 16px;
-    display: grid;
-    grid-template-columns: 56px 1fr;
-    gap: 20px;
-    align-items: start;
     border-radius: var(--radius);
   }
-  .rate-card .rc-num {
+  .rc-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 18px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .rc-title {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .rc-num {
     font-family: var(--mono);
-    font-size: 10px;
-    color: var(--ink-3);
+    font-size: 11px;
+    color: var(--accent);
     letter-spacing: 0.14em;
-    padding-top: 6px;
+    background: var(--accent-soft);
+    padding: 4px 8px;
+    border-radius: 3px;
     text-transform: uppercase;
+    font-weight: 600;
   }
-  .rate-card .rc-num strong {
-    display: block;
-    font-family: var(--display);
-    font-size: 28px;
-    font-weight: 400;
-    color: var(--ink);
-    letter-spacing: -0.01em;
-    margin-top: 2px;
-    font-variation-settings: "opsz" 72;
-  }
-  .rate-card h3 {
+  .rc-name {
     font-family: var(--display);
     font-weight: 500;
-    font-size: 22px;
-    margin: 0 0 2px;
+    font-size: 24px;
+    margin: 0;
     color: var(--ink);
     letter-spacing: -0.015em;
     font-variation-settings: "opsz" 72;
   }
-  .rate-card .rc-cuisine { font-style: italic; font-size: 13px; color: var(--ink-3); margin: 0 0 14px; }
+  .rc-cuisine {
+    display: block;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--ink-3);
+    margin-top: 2px;
+    width: 100%;
+  }
+  .rc-links {
+    display: flex;
+    gap: 14px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .rc-links a {
+    color: var(--accent-deep);
+    text-decoration: none;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 2px;
+    transition: border-color 0.15s ease;
+  }
+  .rc-links a:hover { border-color: var(--accent); }
 
-  .stars-input { display: inline-flex; gap: 2px; margin: 6px 0 14px; }
+  .rc-body { /* main rating content */ }
+
+  .rc-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 500;
+    margin: 14px 0 6px;
+    display: block;
+  }
+  .rc-label:first-child { margin-top: 0; }
+
+  .stars-input { display: inline-flex; gap: 2px; margin: 0 0 4px; }
   .stars-input button {
     background: none;
     border: none;
     cursor: pointer;
-    font-size: 26px;
+    font-size: 28px;
     line-height: 1;
     padding: 4px 5px;
     color: var(--line);
@@ -684,20 +923,81 @@
     background: var(--surface);
     color: var(--ink);
     border-radius: 4px;
-    margin-bottom: 10px;
+    margin-bottom: 4px;
     transition: border-color 0.15s ease;
   }
   .rate-card textarea { resize: vertical; min-height: 64px; line-height: 1.5; }
   .rate-card input:focus, .rate-card textarea:focus { outline: none; border-color: var(--accent); }
 
-  .rate-card .submit {
+  /* Photo uploader */
+  .photo-uploader { margin: 6px 0 14px; }
+  .photo-uploader input[type=file] { display: none; }
+  .photo-btn {
     font-family: var(--sans);
     font-size: 12px;
+    font-weight: 500;
+    background: var(--surface);
+    border: 1px dashed var(--line);
+    color: var(--ink-2);
+    padding: 10px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+  .photo-btn:hover { border-color: var(--accent); color: var(--accent-deep); }
+  .photo-btn:disabled { color: var(--ink-4); cursor: not-allowed; border-style: solid; }
+  .photo-btn .ico { margin-right: 6px; color: var(--accent); }
+
+  .thumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .thumbs:empty { margin-top: 0; }
+  .thumb {
+    position: relative;
+    width: 72px;
+    height: 72px;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+  }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .thumb .remove {
+    position: absolute;
+    top: 3px; right: 3px;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(10, 10, 10, 0.7);
+    color: #fff;
+    font-size: 12px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+  .thumb .remove:hover { background: var(--red); }
+
+  .rc-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+  .rate-card .submit {
+    font-family: var(--sans);
+    font-size: 13px;
     font-weight: 500;
     background: var(--ink);
     color: var(--surface);
     border: none;
-    padding: 10px 18px;
+    padding: 10px 22px;
     border-radius: 999px;
     cursor: pointer;
     transition: background 0.15s ease;
@@ -709,17 +1009,14 @@
     font-family: var(--mono);
     font-size: 11px;
     letter-spacing: 0.08em;
-    margin-left: 12px;
     color: var(--accent);
   }
   .rate-card .status.error { color: var(--red); }
 
   .rate-card .recent {
-    margin-top: 18px;
-    padding-top: 16px;
+    margin-top: 20px;
+    padding-top: 18px;
     border-top: 1px solid var(--line-soft);
-    font-size: 14px;
-    color: var(--ink-2);
   }
   .rate-card .recent-head {
     font-family: var(--mono);
@@ -727,34 +1024,63 @@
     letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--ink-3);
-    margin-bottom: 8px;
+    margin-bottom: 10px;
   }
-  .rate-card .recent-item { padding: 5px 0; font-size: 14px; line-height: 1.5; }
+  .rate-card .recent-item {
+    padding: 8px 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--ink-2);
+    border-bottom: 1px dashed var(--line-soft);
+  }
+  .rate-card .recent-item:last-child { border-bottom: none; }
   .rate-card .recent-item .who { font-weight: 600; color: var(--ink); }
   .rate-card .recent-item .stars-small { color: var(--gold); margin-right: 6px; }
-
-  @media (max-width: 540px) {
-    .rate-card { grid-template-columns: 1fr; gap: 8px; }
-    .rate-card .rc-num { display: flex; gap: 12px; align-items: baseline; padding-top: 0; }
-    .rate-card .rc-num strong { margin-top: 0; font-size: 22px; }
+  .rate-card .recent-photos {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+    flex-wrap: wrap;
   }
+  .rate-card .recent-photos a {
+    display: block;
+    width: 64px; height: 64px;
+    border-radius: 3px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+  }
+  .rate-card .recent-photos img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-  /* FOOTER */
+  /* ========================================
+     FOOTER
+     ======================================== */
   footer {
-    padding: 56px var(--pad) 64px;
+    padding: 48px var(--pad);
     text-align: center;
     font-family: var(--mono);
     font-size: 11px;
     letter-spacing: 0.10em;
     color: var(--ink-3);
     line-height: 1.8;
-    background: var(--surface);
+    background: var(--bg);
     border-top: 1px solid var(--line);
   }
   footer a { color: var(--ink-2); }
-  footer .verified { color: var(--accent); margin-top: 16px; }
+  footer .signout {
+    margin-top: 12px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font: inherit;
+    color: var(--ink-3);
+    text-decoration: underline;
+    text-decoration-color: var(--line);
+  }
+  footer .signout:hover { color: var(--ink); text-decoration-color: var(--accent); }
 
-  /* LOADING */
+  /* ========================================
+     LOADING + ANIMATIONS
+     ======================================== */
   .stop.is-loading { min-height: 220px; }
   .stop.is-loading .skel-line {
     height: 14px;
@@ -765,10 +1091,7 @@
   }
   .stop.is-loading .skel-line.lg { height: 36px; width: 55%; }
   .stop.is-loading .skel-line.sm { width: 30%; }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
-  }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(6px); }
@@ -777,9 +1100,46 @@
   .stop.loaded, .rate-card.loaded { animation: fadeIn 0.35s ease both; }
 </style>
 </head>
-<body>
+<body class="gated">
 
-<header class="masthead">
+<!-- ===================== AUTH GATE ===================== -->
+<div id="gate" class="gate">
+  <div class="gate-card">
+    <div class="gate-eyebrow">Members only · May 16, 2026</div>
+    <h1 class="gate-title">Jackson Heights<br>&amp; Elmhurst <em>Food Crawl</em></h1>
+
+    <div class="gate-stage" data-stage="password">
+      <p class="gate-desc">Enter the crawl password to continue.</p>
+      <input type="password" id="gate-password" class="gate-input" placeholder="Password" autocomplete="off" autocapitalize="off" autocorrect="off">
+      <div id="gate-error" class="gate-error" hidden></div>
+      <button id="gate-password-submit" class="gate-btn">Enter</button>
+    </div>
+
+    <div class="gate-stage" data-stage="name" hidden>
+      <p class="gate-desc">Welcome. What name should your ratings show under?</p>
+      <input type="text" id="gate-name" class="gate-input" placeholder="Your name" maxlength="50" autocomplete="given-name">
+      <button id="gate-name-submit" class="gate-btn" disabled>Start rating →</button>
+    </div>
+
+    <div class="gate-foot">★ Hayley · Anjali · Shashank · Anne · Phong · John</div>
+  </div>
+</div>
+
+<!-- ===================== TOP NAV ===================== -->
+<nav id="topnav" class="topnav" hidden>
+  <div class="topnav-inner">
+    <a href="#top" class="brand"><span class="brand-full">Jackson Heights <em>Food Crawl</em></span></a>
+    <div class="links">
+      <span class="hello">Hi, <strong id="hello-name"></strong></span>
+      <a href="#map">Map</a>
+      <a href="#crawl">Guide</a>
+      <a href="#ratings" class="primary">★ Rate</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ===================== MASTHEAD ===================== -->
+<header class="masthead" id="top">
   <div class="wrap">
     <div class="eyebrow">First Annual · May 16 · 2026</div>
     <h1 class="title">Jackson Heights<br>&amp; Elmhurst<br><em>Food Crawl</em></h1>
@@ -797,16 +1157,18 @@
   </div>
 </header>
 
-<section class="map-section">
+<!-- ===================== MAP ===================== -->
+<section class="map-section" id="map">
   <div class="wrap-wide">
     <div class="map-header">
       <h2>The Route</h2>
       <span class="map-meta">East along Roosevelt Ave · ~1.7 miles end-to-end</span>
     </div>
-    <div id="map" aria-label="Map showing the six food crawl stops"></div>
+    <div id="map-canvas" aria-label="Map showing the six food crawl stops"></div>
   </div>
 </section>
 
+<!-- ===================== START & END ===================== -->
 <section>
   <div class="wrap">
     <div class="section-label">§ 01</div>
@@ -817,6 +1179,7 @@
   </div>
 </section>
 
+<!-- ===================== HOW TO RUN ===================== -->
 <section>
   <div class="wrap">
     <div class="section-label">§ 02</div>
@@ -832,7 +1195,8 @@
   </div>
 </section>
 
-<section class="stops-section">
+<!-- ===================== THE CRAWL ===================== -->
+<section class="stops-section" id="crawl">
   <div class="wrap">
     <div class="section-label">§ 03 · Six stops</div>
     <h2 class="section-head">The crawl</h2>
@@ -843,6 +1207,7 @@
   </div>
 </section>
 
+<!-- ===================== ROUTE SUMMARY ===================== -->
 <section>
   <div class="wrap-wide">
     <div class="section-label">§ 04</div>
@@ -863,6 +1228,7 @@
   </div>
 </section>
 
+<!-- ===================== TIMING ===================== -->
 <section>
   <div class="wrap-wide">
     <div class="section-label">§ 05</div>
@@ -882,16 +1248,15 @@
   </div>
 </section>
 
+<!-- ===================== STRATEGY ===================== -->
 <section>
   <div class="wrap">
     <div class="section-label">§ 06</div>
     <h2 class="section-head">Crawl strategy</h2>
-
     <div class="strategy-block">
       <h3>Biggest mistake to avoid</h3>
       <p>Ordering full meals. The number-one way to ruin a 6-stop crawl is treating Stop 2 like dinner. Two or three plates per stop, share everything, keep moving.</p>
     </div>
-
     <div class="strategy-block">
       <h3>Ordering rhythm for six people</h3>
       <ul>
@@ -900,7 +1265,6 @@
         <li>If a stop's plates are small (Tong, Khampa), double the orders. If they're large (Khao Kang), don't.</li>
       </ul>
     </div>
-
     <div class="strategy-block">
       <h3>Worth spontaneously adding</h3>
       <ul>
@@ -910,7 +1274,6 @@
         <li>A scoop of kulfi or falooda if anyone's still standing</li>
       </ul>
     </div>
-
     <div class="strategy-block">
       <h3>Why this lineup works</h3>
       <p>Six cuisines, no repetition. Each stop hits a different flavor register: snacky → grilled → herbal/acidic → dumpling → curry/braise → braised-beef-and-cheese. The route is a tight loop — no doubling back, no transit.</p>
@@ -918,32 +1281,43 @@
   </div>
 </section>
 
-<section class="rate-cta" id="rate-cta">
-  <div class="wrap">
-    <div class="section-label" style="margin-bottom:14px;">After the crawl</div>
-    <h2>Did each stop <em>earn its slot?</em></h2>
-    <p>Rate every stop, drop a quick note, and see what everyone else thought. Live results from the crawl group.</p>
-    <button id="reveal-rate" class="big-btn"><span class="star">★</span>Rate the stops</button>
-  </div>
-</section>
-
-<section class="rating-section" id="rating-section" hidden>
+<!-- ===================== RATING SECTION ===================== -->
+<section class="rating-section" id="ratings">
   <div class="wrap">
     <div class="intro">
       <div class="section-label" style="text-align:center;">§ 07 · Live</div>
       <h2 class="section-head" style="text-align:center;">Your ratings</h2>
-      <p class="lede" style="margin:0 auto;text-align:center;">One star = regret. Five stars = will return tomorrow. Your name is optional.</p>
+      <p class="lede" style="margin:0 auto;text-align:center;">One star = regret. Five stars = will return tomorrow. Add up to 3 photos per stop.</p>
     </div>
+
+    <nav class="section-nav top">
+      <a href="#top">← Top</a>
+      <span class="sep"></span>
+      <a href="#map">Map</a>
+      <span class="sep"></span>
+      <a href="#crawl">Guide</a>
+    </nav>
+
     <div id="rate-cards-container"></div>
+
+    <nav class="section-nav bottom">
+      <a href="#top">↑ Top</a>
+      <span class="sep"></span>
+      <a href="#map">Map</a>
+      <span class="sep"></span>
+      <a href="#crawl">Guide</a>
+    </nav>
   </div>
 </section>
 
+<!-- ===================== FOOTER ===================== -->
 <footer>
   <div>Built on <a href="https://www.netlify.com" target="_blank" rel="noopener">Netlify</a> + <a href="https://supabase.com" target="_blank" rel="noopener">Supabase</a></div>
   <div style="margin-top:8px;">A learning project · May 2026</div>
-  <div class="verified">✓ Auto-deploy verified</div>
+  <button class="signout" id="sign-out" type="button">Sign out</button>
 </footer>
 
+<!-- ===================== SCRIPTS ===================== -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
 <script type="module">
@@ -953,6 +1327,114 @@
   const SUPABASE_KEY = 'sb_publishable_UC3Y9ngaCEpzfonAkM8teQ_1vFvYv4d';
   const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
+  // ============== AUTH (soft client-side gate) ==============
+  // Note: this gate is for friends-and-family use only.
+  // The password is visible in source. Anyone technical can bypass.
+  // For real auth, use Supabase Auth — which we can swap in later.
+  const PASSWORD = 'foodcrawl2026';
+  const AUTH_KEY = 'fc_auth_v1';
+
+  function getAuth() {
+    try { return JSON.parse(localStorage.getItem(AUTH_KEY) || 'null'); }
+    catch { return null; }
+  }
+  function setAuth(d) { localStorage.setItem(AUTH_KEY, JSON.stringify(d)); }
+  function clearAuth() { localStorage.removeItem(AUTH_KEY); }
+
+  const gateEl = document.getElementById('gate');
+  const navEl = document.getElementById('topnav');
+  const helloEl = document.getElementById('hello-name');
+
+  function showStage(name) {
+    document.querySelectorAll('.gate-stage').forEach((el) => {
+      el.hidden = el.dataset.stage !== name;
+    });
+  }
+  function passGate(name) {
+    document.body.classList.remove('gated');
+    gateEl.hidden = true;
+    navEl.hidden = false;
+    helloEl.textContent = name;
+    setUserName(name);
+  }
+
+  let currentName = '';
+  function setUserName(n) {
+    currentName = n;
+    // Pre-fill any rendered rating cards
+    document.querySelectorAll('.rate-card .name-input').forEach((inp) => {
+      if (!inp.value.trim()) inp.value = n;
+    });
+  }
+
+  function showError(msg) {
+    const e = document.getElementById('gate-error');
+    e.textContent = msg;
+    e.hidden = !msg;
+  }
+
+  // Password submit
+  const pwInput = document.getElementById('gate-password');
+  const pwBtn = document.getElementById('gate-password-submit');
+  function submitPassword() {
+    const val = pwInput.value.trim();
+    if (val === PASSWORD) {
+      setAuth({ authed: true });
+      showError('');
+      showStage('name');
+      setTimeout(() => document.getElementById('gate-name').focus(), 100);
+    } else {
+      pwInput.classList.add('shake');
+      setTimeout(() => pwInput.classList.remove('shake'), 500);
+      showError('Wrong password — try again');
+      pwInput.select();
+    }
+  }
+  pwBtn.addEventListener('click', submitPassword);
+  pwInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') submitPassword(); });
+
+  // Name submit
+  const nameInput = document.getElementById('gate-name');
+  const nameBtn = document.getElementById('gate-name-submit');
+  nameInput.addEventListener('input', () => {
+    nameBtn.disabled = !nameInput.value.trim();
+  });
+  function submitName() {
+    const name = nameInput.value.trim();
+    if (!name) return;
+    setAuth({ authed: true, name });
+    passGate(name);
+    // Scroll to ratings after a beat
+    setTimeout(() => {
+      document.getElementById('ratings').scrollIntoView({ behavior: 'smooth' });
+    }, 250);
+  }
+  nameBtn.addEventListener('click', submitName);
+  nameInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && nameInput.value.trim()) submitName();
+  });
+
+  // Sign out (resets gate)
+  document.getElementById('sign-out').addEventListener('click', () => {
+    if (confirm('Sign out? You\'ll need the password again next time.')) {
+      clearAuth();
+      location.reload();
+    }
+  });
+
+  // Decide which stage of the gate to show on load
+  const auth = getAuth();
+  if (auth?.authed && auth?.name) {
+    passGate(auth.name);
+  } else if (auth?.authed) {
+    showStage('name');
+    setTimeout(() => nameInput.focus(), 100);
+  } else {
+    showStage('password');
+    setTimeout(() => pwInput.focus(), 100);
+  }
+
+  // ============== HELPERS ==============
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
 
@@ -966,6 +1448,14 @@
   const mapsLink = (addr) =>
     `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(addr)}`;
 
+  const MIME_TO_EXT = {
+    'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp',
+    'image/gif': 'gif', 'image/heic': 'heic', 'image/heif': 'heif',
+  };
+  const MAX_PHOTOS = 3;
+  const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
+
+  // ============== STOP CARD ==============
   function renderStop(stop) {
     const must = (stop.must_order || []).map((m) => `<li>${esc(m)}</li>`).join('');
     const findIt = stop.find_it ? `<div class="stop-row"><dt>Find it</dt><dd>${esc(stop.find_it)}</dd></div>` : '';
@@ -974,7 +1464,7 @@
     const arriveBy = stop.arrive_by ? `<span class="sep">·</span>Arrive <strong style="color:var(--ink)">${esc(stop.arrive_by)}</strong>` : '';
 
     return `
-      <article class="stop loaded" data-stop-id="${stop.id}">
+      <article id="stop-${stop.order_index}" class="stop loaded" data-stop-id="${stop.id}">
         <div class="stop-tag">Stop ${String(stop.order_index).padStart(2, '0')}</div>
         <div class="stop-head">
           <h3 class="stop-name">${esc(stop.name)}</h3>
@@ -992,6 +1482,10 @@
           <div class="stop-row"><dt>What to order</dt><dd><ul class="must-order">${must}</ul></dd></div>
         </dl>
         <p class="stop-strategy">${esc(stop.strategy)}</p>
+        <div class="stop-foot">
+          <a href="#rate-${stop.order_index}">★ Rate this stop</a>
+          <a href="#map">View on map ↗</a>
+        </div>
       </article>
     `;
   }
@@ -1022,25 +1516,46 @@
     </div>
   `;
 
+  // ============== RATE CARD ==============
   function renderRateCard(stop) {
     return `
-      <article class="rate-card loaded" data-stop-id="${stop.id}">
-        <div class="rc-num">
-          Stop
-          <strong>${String(stop.order_index).padStart(2, '0')}</strong>
-        </div>
-        <div>
-          <h3>${esc(stop.name)}</h3>
-          <p class="rc-cuisine">${esc(stop.cuisine)}</p>
+      <article id="rate-${stop.order_index}" class="rate-card loaded" data-stop-id="${stop.id}" style="scroll-margin-top: calc(var(--nav-h) + 24px);">
+        <header class="rc-header">
+          <div class="rc-title">
+            <span class="rc-num">Stop ${String(stop.order_index).padStart(2, '0')}</span>
+            <h3 class="rc-name">${esc(stop.name)}</h3>
+            <span class="rc-cuisine">${esc(stop.cuisine)}</span>
+          </div>
+          <div class="rc-links">
+            <a href="#stop-${stop.order_index}">Guide ↗</a>
+            <a href="#map">Map ↗</a>
+          </div>
+        </header>
+
+        <div class="rc-body">
+          <label class="rc-label">Stars</label>
           <div class="stars-input" data-stop-id="${stop.id}" role="radiogroup" aria-label="Rate ${esc(stop.name)}">
             ${[1,2,3,4,5].map(n => `<button type="button" data-val="${n}" aria-label="${n} star${n>1?'s':''}">${STAR_EMPTY}</button>`).join('')}
           </div>
-          <input type="text" placeholder="Your name (optional)" maxlength="50" class="name-input">
-          <textarea placeholder="A quick note (optional)" maxlength="500" class="comment-input"></textarea>
-          <div>
+
+          <label class="rc-label">Your name</label>
+          <input type="text" class="name-input" maxlength="50" placeholder="Name">
+
+          <label class="rc-label">Note (optional)</label>
+          <textarea class="comment-input" maxlength="500" placeholder="What stood out? What did you order?"></textarea>
+
+          <label class="rc-label">Photos (optional · up to 3 · 5 MB each)</label>
+          <div class="photo-uploader">
+            <input type="file" class="file-input" multiple accept="image/jpeg,image/png,image/webp,image/gif,image/heic,image/heif">
+            <button type="button" class="photo-btn"><span class="ico">+</span>Add photos</button>
+            <div class="thumbs"></div>
+          </div>
+
+          <div class="rc-actions">
             <button class="submit" type="button" disabled>Submit rating</button>
             <span class="status"></span>
           </div>
+
           <div class="recent" id="recent-${stop.id}" hidden>
             <div class="recent-head">Recent ratings</div>
             <div class="recent-list"></div>
@@ -1050,6 +1565,7 @@
     `;
   }
 
+  // ============== RATINGS DISPLAY ==============
   function aggregate(ratings) {
     const byStop = new Map();
     for (const r of ratings) {
@@ -1065,6 +1581,14 @@
   };
 
   function updateRatingDisplays(byStop) {
+    // Reset all to "no ratings yet" first
+    $$('.stop-rating').forEach((el) => {
+      if (!el.id.startsWith('rating-display-')) return;
+      el.classList.remove('has-ratings');
+      el.innerHTML = '— no ratings yet —';
+    });
+    $$('.recent').forEach((el) => { el.hidden = true; });
+
     for (const stopId of byStop.keys()) {
       const ratings = byStop.get(stopId);
       const a = avg(ratings);
@@ -1077,21 +1601,42 @@
       const recentEl = document.getElementById(`recent-${stopId}`);
       if (recentEl) {
         const list = recentEl.querySelector('.recent-list');
-        const recent = ratings.slice(0, 5);
+        const recent = ratings.slice(0, 8);
         if (recent.length) {
           recentEl.hidden = false;
-          list.innerHTML = recent.map((r) => `
-            <div class="recent-item">
-              <span class="stars-small">${starsString(r.rating)}</span>
-              ${r.rater_name ? `<span class="who">${esc(r.rater_name)}</span>: ` : ''}${esc(r.comment || (r.rater_name ? '' : 'rated it'))}
-            </div>
-          `).join('');
+          list.innerHTML = recent.map((r) => {
+            const photos = (r.photo_urls || []).map((url) =>
+              `<a href="${esc(url)}" target="_blank" rel="noopener"><img src="${esc(url)}" alt="" loading="lazy"></a>`
+            ).join('');
+            return `
+              <div class="recent-item">
+                <span class="stars-small">${starsString(r.rating)}</span>${r.rater_name ? `<span class="who">${esc(r.rater_name)}</span>` : '<span class="who">Anonymous</span>'}${r.comment ? `: ${esc(r.comment)}` : ''}
+                ${photos ? `<div class="recent-photos">${photos}</div>` : ''}
+              </div>
+            `;
+          }).join('');
         }
       }
     }
   }
 
-  function wireRateCard(card) {
+  // ============== PHOTO UPLOAD ==============
+  async function uploadPhotos(stopOrderIdx, files) {
+    const tasks = files.map(async (file) => {
+      const ext = MIME_TO_EXT[file.type] || 'jpg';
+      const path = `stop-${stopOrderIdx}/${crypto.randomUUID()}.${ext}`;
+      const { error } = await sb.storage
+        .from('rating-photos')
+        .upload(path, file, { contentType: file.type, cacheControl: '3600' });
+      if (error) throw error;
+      const { data } = sb.storage.from('rating-photos').getPublicUrl(path);
+      return data.publicUrl;
+    });
+    return Promise.all(tasks);
+  }
+
+  // ============== WIRE A RATE CARD ==============
+  function wireRateCard(card, stop) {
     const stopId = parseInt(card.dataset.stopId, 10);
     const starsEl = card.querySelector('.stars-input');
     const buttons = $$('button', starsEl);
@@ -1099,7 +1644,15 @@
     const statusEl = card.querySelector('.status');
     const nameEl = card.querySelector('.name-input');
     const commentEl = card.querySelector('.comment-input');
+    const fileInput = card.querySelector('.file-input');
+    const addBtn = card.querySelector('.photo-btn');
+    const thumbsEl = card.querySelector('.thumbs');
+
     let value = 0;
+    let files = [];
+
+    // Pre-fill name from current user
+    if (currentName && !nameEl.value) nameEl.value = currentName;
 
     function paint(val, preview = false) {
       starsEl.classList.toggle('has-preview', preview);
@@ -1122,17 +1675,67 @@
     });
     starsEl.addEventListener('mouseleave', () => paint(value, false));
 
+    // Photo handlers
+    addBtn.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', () => {
+      for (const f of fileInput.files) {
+        if (files.length >= MAX_PHOTOS) break;
+        if (f.size > MAX_PHOTO_BYTES) {
+          statusEl.classList.add('error');
+          statusEl.textContent = `${f.name} is too large (max 5 MB)`;
+          continue;
+        }
+        files.push(f);
+      }
+      fileInput.value = '';
+      renderThumbs();
+    });
+
+    function renderThumbs() {
+      addBtn.disabled = files.length >= MAX_PHOTOS;
+      thumbsEl.innerHTML = files.map((f, i) => `
+        <div class="thumb">
+          <img src="${URL.createObjectURL(f)}" alt="">
+          <button type="button" class="remove" data-i="${i}" aria-label="Remove photo">×</button>
+        </div>
+      `).join('');
+      $$('.remove', thumbsEl).forEach((btn) => {
+        btn.addEventListener('click', () => {
+          files.splice(parseInt(btn.dataset.i), 1);
+          renderThumbs();
+        });
+      });
+    }
+
+    // Submit
     submitBtn.addEventListener('click', async () => {
       if (!value) return;
       submitBtn.disabled = true;
+      addBtn.disabled = true;
       statusEl.classList.remove('error');
-      statusEl.textContent = 'Saving…';
 
+      let photoUrls = [];
+      if (files.length > 0) {
+        statusEl.textContent = `Uploading ${files.length} photo${files.length > 1 ? 's' : ''}…`;
+        try {
+          photoUrls = await uploadPhotos(stop.order_index, files);
+        } catch (err) {
+          console.error('Photo upload failed:', err);
+          statusEl.classList.add('error');
+          statusEl.textContent = 'Photo upload failed — try again';
+          submitBtn.disabled = false;
+          addBtn.disabled = files.length >= MAX_PHOTOS;
+          return;
+        }
+      }
+
+      statusEl.textContent = 'Saving…';
       const payload = {
         stop_id: stopId,
         rating: value,
         comment: commentEl.value.trim() || null,
         rater_name: nameEl.value.trim() || null,
+        photo_urls: photoUrls,
       };
 
       const { error } = await sb.from('ratings').insert(payload);
@@ -1141,33 +1744,49 @@
         statusEl.classList.add('error');
         statusEl.textContent = 'Error — try again';
         submitBtn.disabled = false;
+        addBtn.disabled = files.length >= MAX_PHOTOS;
         return;
       }
 
+      // Success: reset card
       statusEl.textContent = '✓ Thanks!';
       commentEl.value = '';
+      files = [];
+      renderThumbs();
+      value = 0;
+      paint(0, false);
+      submitBtn.disabled = true;
+      addBtn.disabled = false;
+
+      // Persist a hint that name was used (in case it changed)
+      if (nameEl.value.trim()) {
+        const cur = getAuth() || {};
+        if (cur.authed) setAuth({ ...cur, name: nameEl.value.trim() });
+      }
+
       await loadRatings();
+
+      // Clear "Thanks!" message after a few seconds
+      setTimeout(() => {
+        if (statusEl.textContent === '✓ Thanks!') statusEl.textContent = '';
+      }, 3500);
     });
   }
 
+  // ============== MAP ==============
   function buildMap(stops) {
-    const withCoords = stops.filter(s => s.latitude != null && s.longitude != null);
+    const withCoords = stops.filter((s) => s.latitude != null && s.longitude != null);
     if (!withCoords.length) return;
 
-    const map = L.map('map', { scrollWheelZoom: false, zoomControl: true });
+    const map = L.map('map-canvas', { scrollWheelZoom: false, zoomControl: true });
 
     L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
       maxZoom: 19,
     }).addTo(map);
 
-    const path = withCoords.map(s => [s.latitude, s.longitude]);
-    L.polyline(path, {
-      color: '#047857',
-      weight: 3,
-      opacity: 0.55,
-      dashArray: '6, 6',
-    }).addTo(map);
+    const path = withCoords.map((s) => [s.latitude, s.longitude]);
+    L.polyline(path, { color: '#047857', weight: 3, opacity: 0.55, dashArray: '6, 6' }).addTo(map);
 
     withCoords.forEach((s) => {
       const icon = L.divIcon({
@@ -1184,6 +1803,7 @@
     map.fitBounds(L.latLngBounds(path), { padding: [40, 40] });
   }
 
+  // ============== BOOT ==============
   async function loadStops() {
     const { data: stops, error } = await sb
       .from('stops')
@@ -1196,6 +1816,7 @@
       return null;
     }
 
+    // Render stops with walks and detour
     const parts = [];
     stops.forEach((stop, i) => {
       if (i > 0) parts.push(renderWalk(stop));
@@ -1204,38 +1825,29 @@
     });
     $('#stops-container').innerHTML = parts.join('');
 
+    // Render rating cards
     $('#rate-cards-container').innerHTML = stops.map(renderRateCard).join('');
-    $$('.rate-card').forEach(wireRateCard);
+    $$('.rate-card').forEach((card) => {
+      const stopId = parseInt(card.dataset.stopId, 10);
+      const stop = stops.find((s) => s.id === stopId);
+      wireRateCard(card, stop);
+    });
+
+    // Pre-fill name in newly rendered cards
+    if (currentName) setUserName(currentName);
 
     buildMap(stops);
-
     return stops;
   }
 
   async function loadRatings() {
     const { data, error } = await sb
       .from('ratings')
-      .select('stop_id, rating, comment, rater_name, created_at')
+      .select('stop_id, rating, comment, rater_name, photo_urls, created_at')
       .order('created_at', { ascending: false });
     if (error) { console.error(error); return; }
     updateRatingDisplays(aggregate(data || []));
   }
-
-  $('#reveal-rate').addEventListener('click', () => {
-    const sec = $('#rating-section');
-    const btn = $('#reveal-rate');
-    if (sec.hidden) {
-      sec.hidden = false;
-      btn.innerHTML = '<span class="star">★</span>Hide ratings';
-      btn.classList.add('is-open');
-      setTimeout(() => sec.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
-    } else {
-      sec.hidden = true;
-      btn.innerHTML = '<span class="star">★</span>Rate the stops';
-      btn.classList.remove('is-open');
-      $('#rate-cta').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  });
 
   (async () => {
     await loadStops();
