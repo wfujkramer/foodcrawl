@@ -257,10 +257,8 @@
   ul.tips { list-style: none; padding: 0; margin: 0; counter-reset: tip; }
   ul.tips li {
     counter-increment: tip;
-    display: grid;
-    grid-template-columns: 48px 1fr;
-    gap: 16px;
-    padding: 20px 0;
+    position: relative;
+    padding: 20px 0 20px 64px;
     border-bottom: 1px solid var(--line-soft);
     font-size: 16.5px;
     line-height: 1.55;
@@ -268,11 +266,13 @@
   }
   ul.tips li::before {
     content: counter(tip, decimal-leading-zero);
+    position: absolute;
+    left: 0;
+    top: 24px;
     font-family: var(--mono);
     font-size: 11px;
     color: var(--accent);
     letter-spacing: 0.08em;
-    padding-top: 4px;
     font-weight: 500;
   }
   ul.tips li:last-child { border-bottom: none; }
