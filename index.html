@@ -1,0 +1,1294 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="The First Annual Jackson Heights & Elmhurst Food Crawl — May 16, 2026. Six stops across Bangladeshi, Pakistani, Thai, Tibetan, and Mexican kitchens. Built on Netlify + Supabase.">
+<meta name="theme-color" content="#f4ecdc">
+<title>Jackson Heights &amp; Elmhurst Food Crawl · May 16 2026</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300..900,0..100&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #f4ecdc;
+    --paper: #fbf6ea;
+    --paper-warm: #f8efd9;
+    --ink: #1c1612;
+    --ink-soft: #4a3f35;
+    --ink-faint: #8a7c6b;
+    --rule: #d8cbb0;
+    --rule-soft: #e6dcc4;
+    --saffron: #c9701c;
+    --saffron-deep: #a85510;
+    --chili: #b1330d;
+    --sage: #5e7d3c;
+    --stamp: #8b1f0a;
+    --stamp-ink: #6a1607;
+
+    --display: 'Fraunces', 'Times New Roman', serif;
+    --body: 'Newsreader', 'Georgia', serif;
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+
+    --measure: 64ch;
+    --pad: clamp(20px, 5vw, 56px);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    margin: 0;
+    font-family: var(--body);
+    font-optical-sizing: auto;
+    font-size: 18px;
+    line-height: 1.55;
+    color: var(--ink);
+    background: var(--bg);
+    background-image:
+      radial-gradient(at 0% 0%, rgba(201, 112, 28, 0.05), transparent 60%),
+      radial-gradient(at 100% 100%, rgba(94, 125, 60, 0.05), transparent 60%);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* subtle paper texture */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence baseFrequency='0.85' numOctaves='2' seed='5'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.04 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    z-index: 9999;
+    mix-blend-mode: multiply;
+    opacity: 0.6;
+  }
+
+  .wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 var(--pad);
+  }
+
+  .wrap-wide {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 0 var(--pad);
+  }
+
+  a { color: inherit; text-decoration-color: var(--saffron); text-underline-offset: 3px; }
+  a:hover { color: var(--saffron-deep); }
+
+  /* ===== MASTHEAD ===== */
+  header.masthead {
+    padding: clamp(48px, 8vw, 96px) 0 clamp(40px, 6vw, 72px);
+    text-align: center;
+    border-bottom: 2px solid var(--ink);
+    position: relative;
+  }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--stamp);
+    margin-bottom: 28px;
+  }
+
+  .eyebrow b { font-weight: 700; }
+
+  h1.title {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(48px, 11vw, 112px);
+    line-height: 0.92;
+    letter-spacing: -0.025em;
+    margin: 0 0 24px;
+    font-variation-settings: "opsz" 144, "SOFT" 30;
+  }
+
+  h1.title em {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--saffron-deep);
+    font-variation-settings: "opsz" 144, "SOFT" 50;
+  }
+
+  .cuisines {
+    font-family: var(--body);
+    font-style: italic;
+    font-size: clamp(15px, 2.2vw, 19px);
+    color: var(--ink-soft);
+    letter-spacing: 0.03em;
+    margin: 12px 0 36px;
+  }
+  .cuisines span { white-space: nowrap; }
+  .cuisines .dot {
+    display: inline-block;
+    width: 4px; height: 4px;
+    background: var(--saffron);
+    border-radius: 50%;
+    margin: 0 12px 4px;
+    vertical-align: middle;
+  }
+
+  .party {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin: 0 0 40px;
+  }
+
+  /* ===== STATS GRID ===== */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border-top: 1px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+    margin: 32px 0 0;
+  }
+  .stats > div {
+    padding: 20px 8px;
+    border-right: 1px solid var(--rule);
+    text-align: center;
+  }
+  .stats > div:last-child { border-right: none; }
+  .stats .num {
+    display: block;
+    font-family: var(--display);
+    font-size: clamp(28px, 5vw, 42px);
+    font-weight: 500;
+    line-height: 1;
+    font-variation-settings: "opsz" 144;
+  }
+  .stats .label {
+    display: block;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-top: 8px;
+  }
+
+  @media (max-width: 540px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .stats > div:nth-child(2) { border-right: none; }
+    .stats > div:nth-child(1), .stats > div:nth-child(2) {
+      border-bottom: 1px solid var(--rule);
+    }
+  }
+
+  /* ===== SECTIONS ===== */
+  section { padding: clamp(48px, 8vw, 88px) 0; }
+  section + section { padding-top: 0; }
+
+  h2.section-head {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: clamp(28px, 5vw, 42px);
+    letter-spacing: -0.015em;
+    margin: 0 0 24px;
+    font-variation-settings: "opsz" 144, "SOFT" 20;
+  }
+
+  h2.section-head .num-mark {
+    font-family: var(--mono);
+    font-weight: 500;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    color: var(--stamp);
+    vertical-align: top;
+    display: block;
+    margin-bottom: 12px;
+  }
+
+  p.lede {
+    font-family: var(--body);
+    font-size: clamp(18px, 2.4vw, 21px);
+    line-height: 1.55;
+    color: var(--ink-soft);
+    max-width: var(--measure);
+  }
+
+  p.lede strong { color: var(--ink); font-weight: 600; }
+
+  /* ===== HOW TO RUN ===== */
+  ul.tips {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    counter-reset: tip;
+  }
+  ul.tips li {
+    counter-increment: tip;
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 16px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--rule-soft);
+    font-size: 17px;
+    line-height: 1.5;
+  }
+  ul.tips li::before {
+    content: counter(tip, decimal-leading-zero);
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--stamp);
+    letter-spacing: 0.12em;
+    padding-top: 4px;
+  }
+  ul.tips li:last-child { border-bottom: none; }
+  ul.tips strong { color: var(--chili); font-weight: 600; }
+
+  /* ===== STOP CARDS ===== */
+  .stops-section {
+    background: linear-gradient(180deg, var(--bg) 0%, var(--paper-warm) 8%, var(--paper-warm) 92%, var(--bg) 100%);
+    padding: clamp(56px, 9vw, 96px) 0;
+    border-top: 2px solid var(--ink);
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .stops-section h2.section-head {
+    text-align: center;
+    margin-bottom: 56px;
+  }
+
+  .stop {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    padding: clamp(28px, 5vw, 48px);
+    margin-bottom: 24px;
+    position: relative;
+    box-shadow: 0 1px 0 var(--rule-soft), 0 12px 32px -20px rgba(28, 22, 18, 0.18);
+  }
+
+  .stop-stamp {
+    position: absolute;
+    top: -14px;
+    left: clamp(20px, 4vw, 36px);
+    background: var(--stamp);
+    color: var(--paper);
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    padding: 8px 14px;
+    text-transform: uppercase;
+    transform: rotate(-1.5deg);
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.08);
+  }
+
+  .stop-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+  }
+
+  .stop-name {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: clamp(32px, 6vw, 52px);
+    line-height: 1;
+    margin: 0;
+    letter-spacing: -0.02em;
+    font-variation-settings: "opsz" 144, "SOFT" 30;
+  }
+
+  .stop-rating {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    white-space: nowrap;
+    padding-top: 6px;
+  }
+  .stop-rating .stars { color: var(--saffron); letter-spacing: 0; font-size: 14px; }
+  .stop-rating.has-ratings { color: var(--ink-soft); }
+
+  .stop-cuisine {
+    font-family: var(--body);
+    font-style: italic;
+    font-size: 19px;
+    color: var(--saffron-deep);
+    margin: 0 0 14px;
+  }
+
+  .stop-meta {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    color: var(--ink-soft);
+    margin: 0 0 28px;
+    padding-bottom: 24px;
+    border-bottom: 1px dashed var(--rule);
+  }
+  .stop-meta a {
+    text-decoration: underline;
+    text-decoration-color: var(--saffron);
+    text-decoration-thickness: 1px;
+  }
+
+  .stop-warning {
+    background: var(--chili);
+    color: var(--paper);
+    padding: 14px 18px;
+    margin: 0 0 24px;
+    font-size: 14px;
+    line-height: 1.4;
+    font-weight: 500;
+  }
+  .stop-warning .icon {
+    font-family: var(--mono);
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    font-size: 11px;
+    display: block;
+    margin-bottom: 4px;
+    opacity: 0.85;
+  }
+
+  .stop-row {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 24px;
+    padding: 14px 0;
+    border-top: 1px solid var(--rule-soft);
+  }
+  .stop-row:last-of-type { border-bottom: 1px solid var(--rule-soft); }
+  .stop-row dt {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    padding-top: 4px;
+  }
+  .stop-row dd {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.55;
+  }
+
+  ul.must-order {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  ul.must-order li {
+    padding: 4px 0 4px 22px;
+    position: relative;
+    font-size: 16px;
+  }
+  ul.must-order li::before {
+    content: '◆';
+    position: absolute;
+    left: 0;
+    color: var(--saffron);
+    font-size: 10px;
+    top: 8px;
+  }
+
+  .stop-strategy {
+    font-family: var(--body);
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    font-style: italic;
+    margin: 24px 0 0;
+    padding: 20px 0 0;
+    border-top: 1px solid var(--rule-soft);
+  }
+
+  @media (max-width: 540px) {
+    .stop-row { grid-template-columns: 1fr; gap: 4px; }
+    .stop-row dt { padding-top: 0; }
+  }
+
+  /* ===== WALK INTERLUDE ===== */
+  .walk {
+    text-align: center;
+    padding: 24px 0;
+    margin: 0;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .walk .arrow {
+    font-size: 18px;
+    color: var(--saffron);
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  .walk .min { color: var(--stamp); font-weight: 700; }
+  .walk-dir {
+    display: block;
+    margin-top: 8px;
+    font-family: var(--body);
+    font-style: italic;
+    font-size: 14px;
+    color: var(--ink-faint);
+    letter-spacing: 0;
+    text-transform: none;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* ===== 74TH ST DETOUR CALLOUT ===== */
+  .detour {
+    background: #fef3c7;
+    border: 1.5px solid var(--ink);
+    padding: clamp(24px, 5vw, 36px);
+    margin: 32px 0;
+    position: relative;
+  }
+  .detour::before {
+    content: '★  OPTIONAL DETOUR';
+    display: inline-block;
+    background: var(--ink);
+    color: #fef3c7;
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    padding: 6px 12px;
+    margin-bottom: 20px;
+  }
+  .detour h3 {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: clamp(22px, 3.5vw, 30px);
+    margin: 0 0 16px;
+    font-variation-settings: "opsz" 144;
+  }
+  .detour p { margin: 0 0 14px; font-size: 16px; line-height: 1.55; }
+  .detour ul {
+    list-style: none;
+    padding: 0;
+    margin: 14px 0;
+    font-size: 15px;
+  }
+  .detour ul li {
+    padding: 4px 0 4px 18px;
+    position: relative;
+  }
+  .detour ul li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--ink-faint);
+  }
+
+  /* ===== TABLES ===== */
+  .data-section { padding-top: 0; }
+
+  table.guide-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+    margin: 16px 0 8px;
+  }
+  table.guide-table th,
+  table.guide-table td {
+    text-align: left;
+    padding: 12px 16px 12px 0;
+    border-bottom: 1px solid var(--rule-soft);
+    vertical-align: top;
+  }
+  table.guide-table th {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 500;
+    border-bottom: 1.5px solid var(--ink);
+    white-space: nowrap;
+  }
+  table.guide-table .num-col { width: 32px; color: var(--stamp); font-family: var(--mono); font-weight: 700; }
+  table.guide-table .name-col { font-family: var(--display); font-weight: 500; font-size: 17px; }
+  table.guide-table .time-col { font-family: var(--mono); font-size: 13px; font-weight: 500; white-space: nowrap; color: var(--stamp); }
+
+  @media (max-width: 600px) {
+    table.guide-table th, table.guide-table td { font-size: 13px; padding: 10px 8px 10px 0; }
+    table.guide-table .name-col { font-size: 15px; }
+    table.guide-table .hide-mobile { display: none; }
+  }
+
+  /* ===== STRATEGY ===== */
+  .strategy-block {
+    margin: 32px 0;
+    padding: 24px 0;
+    border-top: 1px solid var(--rule);
+  }
+  .strategy-block h3 {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: 22px;
+    margin: 0 0 12px;
+    font-variation-settings: "opsz" 72, "SOFT" 30;
+  }
+  .strategy-block p { margin: 0 0 12px; font-size: 16px; line-height: 1.6; }
+  .strategy-block ul { padding-left: 20px; margin: 0; }
+  .strategy-block ul li { font-size: 16px; margin: 6px 0; }
+
+  /* ===== RATE BUTTON ===== */
+  .rate-cta {
+    text-align: center;
+    padding: clamp(64px, 10vw, 96px) 0;
+    background: var(--ink);
+    color: var(--bg);
+    position: relative;
+  }
+  .rate-cta::before, .rate-cta::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0;
+    height: 8px;
+    background-image: linear-gradient(90deg, var(--saffron) 0 25%, transparent 25% 50%, var(--chili) 50% 75%, transparent 75% 100%);
+    background-size: 24px 8px;
+  }
+  .rate-cta::before { top: 0; }
+  .rate-cta::after { bottom: 0; }
+
+  .rate-cta .eyebrow {
+    color: var(--saffron);
+    margin-bottom: 16px;
+  }
+  .rate-cta h2 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(32px, 6vw, 56px);
+    margin: 0 0 12px;
+    color: var(--bg);
+    font-variation-settings: "opsz" 144, "SOFT" 50;
+  }
+  .rate-cta h2 em { color: var(--saffron); font-style: italic; }
+  .rate-cta p {
+    color: rgba(244, 236, 220, 0.7);
+    max-width: 460px;
+    margin: 0 auto 36px;
+    font-size: 16px;
+    line-height: 1.55;
+  }
+  .big-btn {
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    background: var(--saffron);
+    color: var(--ink);
+    border: none;
+    padding: 22px 36px;
+    cursor: pointer;
+    transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: 4px 4px 0 var(--bg);
+  }
+  .big-btn:hover {
+    background: #e08a36;
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--bg);
+  }
+  .big-btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 0 0 0 var(--bg);
+  }
+  .big-btn.is-open { background: var(--bg); color: var(--ink); }
+
+  /* ===== RATING SECTION ===== */
+  .rating-section {
+    background: var(--paper-warm);
+    padding: clamp(56px, 9vw, 96px) 0;
+    border-bottom: 2px solid var(--ink);
+  }
+  .rating-section[hidden] { display: none; }
+
+  .rating-section .intro {
+    text-align: center;
+    max-width: 520px;
+    margin: 0 auto 48px;
+  }
+
+  .rate-card {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    padding: clamp(20px, 4vw, 32px);
+    margin-bottom: 18px;
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+  .rate-card .rc-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--stamp);
+    letter-spacing: 0.18em;
+    padding-top: 8px;
+  }
+  .rate-card .rc-num strong {
+    display: block;
+    font-family: var(--display);
+    font-size: 32px;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: 0;
+    margin-top: 4px;
+    font-variation-settings: "opsz" 72;
+  }
+  .rate-card h3 {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: 22px;
+    margin: 0 0 4px;
+    font-variation-settings: "opsz" 72, "SOFT" 30;
+  }
+  .rate-card .rc-cuisine {
+    font-style: italic;
+    font-size: 14px;
+    color: var(--ink-faint);
+    margin: 0 0 16px;
+  }
+
+  .stars-input {
+    display: inline-flex;
+    gap: 4px;
+    margin: 8px 0 14px;
+  }
+  .stars-input button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 28px;
+    line-height: 1;
+    padding: 4px 6px;
+    color: var(--rule);
+    transition: color 0.1s ease, transform 0.1s ease;
+  }
+  .stars-input button:hover { transform: scale(1.15); }
+  .stars-input button.on,
+  .stars-input button.on ~ button.preview-on { color: var(--saffron); }
+  .stars-input.has-preview button.on { color: var(--rule); }
+  .stars-input.has-preview button.preview-on { color: var(--saffron); }
+
+  .rate-card input[type=text],
+  .rate-card textarea {
+    width: 100%;
+    font-family: var(--body);
+    font-size: 15px;
+    padding: 10px 12px;
+    border: 1px solid var(--rule);
+    background: var(--paper-warm);
+    color: var(--ink);
+    border-radius: 2px;
+    margin-bottom: 10px;
+  }
+  .rate-card textarea {
+    resize: vertical;
+    min-height: 64px;
+    font-family: var(--body);
+    line-height: 1.5;
+  }
+  .rate-card input:focus, .rate-card textarea:focus {
+    outline: 2px solid var(--saffron);
+    outline-offset: -1px;
+  }
+
+  .rate-card .submit {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    padding: 12px 22px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  .rate-card .submit:hover { background: var(--stamp); }
+  .rate-card .submit:disabled { background: var(--ink-faint); cursor: not-allowed; }
+
+  .rate-card .status {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-left: 12px;
+    color: var(--sage);
+  }
+  .rate-card .status.error { color: var(--chili); }
+
+  .rate-card .recent {
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--rule);
+    font-size: 14px;
+    color: var(--ink-soft);
+  }
+  .rate-card .recent-head {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 8px;
+  }
+  .rate-card .recent-item {
+    padding: 6px 0;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .rate-card .recent-item .who { font-weight: 600; color: var(--ink); }
+  .rate-card .recent-item .stars-small { color: var(--saffron); margin-right: 6px; }
+
+  @media (max-width: 540px) {
+    .rate-card { grid-template-columns: 1fr; gap: 8px; }
+    .rate-card .rc-num { display: flex; gap: 12px; align-items: baseline; padding-top: 0; }
+    .rate-card .rc-num strong { margin-top: 0; font-size: 24px; }
+  }
+
+  /* ===== FOOTER ===== */
+  footer {
+    padding: 56px var(--pad) 64px;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    line-height: 1.8;
+  }
+  footer a { color: var(--ink-soft); }
+
+  /* ===== LOADING STATE ===== */
+  .skeleton {
+    background: linear-gradient(90deg, var(--rule-soft) 0%, var(--paper) 50%, var(--rule-soft) 100%);
+    background-size: 200% 100%;
+    animation: shimmer 1.4s infinite;
+    border-radius: 2px;
+  }
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+  .stop.is-loading {
+    min-height: 280px;
+  }
+  .stop.is-loading .skeleton-line {
+    height: 16px;
+    margin: 12px 0;
+    background: var(--rule-soft);
+  }
+  .stop.is-loading .skeleton-line.lg { height: 40px; width: 60%; }
+
+  /* fade-in for loaded content */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
+  }
+  .stop.loaded, .rate-card.loaded { animation: fadeUp 0.4s ease both; }
+</style>
+</head>
+<body>
+
+<!-- ===================== MASTHEAD ===================== -->
+<header class="masthead">
+  <div class="wrap">
+    <div class="eyebrow"><b>FIRST ANNUAL</b> · MAY 16 · 2026</div>
+    <h1 class="title">Jackson Heights<br>&amp; Elmhurst<br><em>Food Crawl</em></h1>
+    <div class="cuisines">
+      <span>Bangladeshi</span><span class="dot"></span><span>Pakistani</span><span class="dot"></span><span>Thai</span><span class="dot"></span><span>Tibetan</span><span class="dot"></span><span>Mexican</span>
+    </div>
+    <div class="party">Hayley · Anjali · Shashank · Anne · Phong · John</div>
+
+    <div class="stats">
+      <div><span class="num">6</span><span class="label">People</span></div>
+      <div><span class="num">6</span><span class="label">Stops</span></div>
+      <div><span class="num">1.7<small style="font-size:0.5em">mi</small></span><span class="label">Walking</span></div>
+      <div><span class="num">5<small style="font-size:0.5em">h</small></span><span class="label">3:30 – 8:30 PM</span></div>
+    </div>
+  </div>
+</header>
+
+<!-- ===================== THE ROUTE ===================== -->
+<section>
+  <div class="wrap">
+    <h2 class="section-head">
+      <span class="num-mark">§ 01</span>
+      The Route
+    </h2>
+    <p class="lede">
+      <strong>Start:</strong> Tong, 73rd St &amp; 37th Ave (3:30 PM). <strong>End:</strong> Birria-Landia, Roosevelt &amp; 78th St. Everything is walkable in one continuous loop. Two seated stops in the middle — Playground and Khampa Kitchen — prevent the crawl from becoming a forced march.
+    </p>
+  </div>
+</section>
+
+<!-- ===================== HOW TO RUN ===================== -->
+<section>
+  <div class="wrap">
+    <h2 class="section-head">
+      <span class="num-mark">§ 02</span>
+      How to Run This With Six People
+    </h2>
+    <ul class="tips">
+      <li>Order 2–3 dishes per stop, max. The goal is variety, not volume.</li>
+      <li>Share everything. Family-style at every stop, no exceptions.</li>
+      <li>One person orders, one person pays — rotate. Avoids 6-way Venmo chaos at every stop.</li>
+      <li>20–30 minutes per stop. If you're sitting longer than that, you're over-ordering.</li>
+      <li><strong>Khao Kang closes at 7 PM.</strong> Arrive there no later than 6:30 PM — that's the timing constraint that drives the whole crawl.</li>
+      <li>Bring cash. Tong, Birria-Landia, and some smaller spots are cash-friendly or cash-only.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===================== THE STOPS ===================== -->
+<section class="stops-section">
+  <div class="wrap">
+    <h2 class="section-head">
+      <span class="num-mark">§ 03 · SIX STOPS</span>
+      The Crawl
+    </h2>
+    <div id="stops-container">
+      <!-- Loading placeholders, replaced by JS -->
+      <div class="stop is-loading"><div class="skeleton-line lg"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div>
+      <div class="stop is-loading"><div class="skeleton-line lg"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ROUTE SUMMARY ===================== -->
+<section>
+  <div class="wrap-wide">
+    <h2 class="section-head">
+      <span class="num-mark">§ 04</span>
+      Route Summary
+    </h2>
+    <table class="guide-table">
+      <thead>
+        <tr><th class="num-col">#</th><th>Stop</th><th>Cuisine</th><th class="hide-mobile">Must Order</th><th>Style</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="num-col">1</td><td class="name-col">Tong</td><td>Bangladeshi</td><td class="hide-mobile">Fuchka</td><td>Cart</td></tr>
+        <tr><td class="num-col">2</td><td class="name-col">Kababish</td><td>Pakistani</td><td class="hide-mobile">Seekh kebab + naan</td><td>Takeout</td></tr>
+        <tr><td class="num-col">3</td><td class="name-col">Playground</td><td>Thai</td><td class="hide-mobile">Som tum + larb</td><td>Sit-down</td></tr>
+        <tr><td class="num-col">4</td><td class="name-col">Khampa Kitchen</td><td>Tibetan</td><td class="hide-mobile">Beef momos</td><td>Sit-down</td></tr>
+        <tr><td class="num-col">5</td><td class="name-col">Khao Kang</td><td>Thai (Elmhurst)</td><td class="hide-mobile">Crispy pork + curries</td><td>Counter</td></tr>
+        <tr><td class="num-col">6</td><td class="name-col">Birria-Landia</td><td>Mexican</td><td class="hide-mobile">Birria tacos + consommé</td><td>Truck</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ===================== SUGGESTED TIMING ===================== -->
+<section class="data-section">
+  <div class="wrap-wide">
+    <h2 class="section-head">
+      <span class="num-mark">§ 05</span>
+      Suggested Timing
+    </h2>
+    <table class="guide-table">
+      <thead><tr><th>Time</th><th>Stop</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td class="time-col">3:30 PM</td><td class="name-col">Tong</td><td>Arrive hungry. Opens at 1 PM so no wait.</td></tr>
+        <tr><td class="time-col">4:10 PM</td><td class="name-col">Kababish</td><td>Order all kebabs at once to minimize wait.</td></tr>
+        <tr><td class="time-col">5:00 PM</td><td class="name-col">Playground</td><td>First real sit-down. Opens at 3 PM.</td></tr>
+        <tr><td class="time-col">5:45 PM</td><td class="name-col">Wander 74th St</td><td>15 min — let the group drift; regroup at 37th Ave.</td></tr>
+        <tr><td class="time-col">6:00 PM</td><td class="name-col">Khampa Kitchen</td><td>Quick stop — momos and back out.</td></tr>
+        <tr><td class="time-col">6:30 PM</td><td class="name-col">Khao Kang</td><td><strong style="color:var(--chili)">HARD DEADLINE</strong> — closes at 7.</td></tr>
+        <tr><td class="time-col">7:30 PM</td><td class="name-col">Birria-Landia</td><td>Truck opens at 5. The perfect closer.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ===================== STRATEGY ===================== -->
+<section>
+  <div class="wrap">
+    <h2 class="section-head">
+      <span class="num-mark">§ 06</span>
+      Crawl Strategy
+    </h2>
+
+    <div class="strategy-block">
+      <h3>Biggest mistake to avoid</h3>
+      <p>Ordering full meals. The number-one way to ruin a 6-stop crawl is treating Stop 2 like dinner. Two or three plates per stop, share everything, keep moving.</p>
+    </div>
+
+    <div class="strategy-block">
+      <h3>Ordering rhythm for six people</h3>
+      <ul>
+        <li>At every stop, designate one orderer and one payer. Rotate stops.</li>
+        <li>Order the recommended dishes plus one wildcard the group hasn't tried.</li>
+        <li>If a stop's plates are small (Tong, Khampa), double the orders. If they're large (Khao Kang), don't.</li>
+      </ul>
+    </div>
+
+    <div class="strategy-block">
+      <h3>Worth spontaneously adding</h3>
+      <ul>
+        <li>Sugarcane juice vendors (cash, $4–5)</li>
+        <li>Grilled corn or skewer carts on 74th St</li>
+        <li>Bangladeshi tea stalls along 73rd St for chai</li>
+        <li>A scoop of kulfi or falooda if anyone's still standing</li>
+      </ul>
+    </div>
+
+    <div class="strategy-block">
+      <h3>Why this lineup works</h3>
+      <p>Six cuisines, no repetition. Each stop hits a different flavor register: snacky → grilled → herbal/acidic → dumpling → curry/braise → braised-beef-and-cheese. The route is a tight loop — no doubling back, no transit.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== RATE THE STOPS CTA ===================== -->
+<section class="rate-cta" id="rate-cta">
+  <div class="wrap">
+    <div class="eyebrow">After the crawl ↓</div>
+    <h2>Did each stop <em>earn its slot?</em></h2>
+    <p>Star-rate every stop, drop a quick note, and see what everyone else thought. Live results from the crawl group.</p>
+    <button id="reveal-rate" class="big-btn">★  Rate the Stops</button>
+  </div>
+</section>
+
+<!-- ===================== RATING SECTION ===================== -->
+<section class="rating-section" id="rating-section" hidden>
+  <div class="wrap">
+    <div class="intro">
+      <h2 class="section-head" style="text-align:center;margin-bottom:12px;">
+        <span class="num-mark" style="text-align:center;display:block;">§ 07 · LIVE</span>
+        Your Ratings
+      </h2>
+      <p class="lede" style="margin:0 auto;">One star = regret. Five stars = will return tomorrow. Your name is optional.</p>
+    </div>
+    <div id="rate-cards-container">
+      <!-- Filled by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer>
+  <div>Built on <a href="https://www.netlify.com" target="_blank" rel="noopener">Netlify</a> + <a href="https://supabase.com" target="_blank" rel="noopener">Supabase</a></div>
+  <div style="margin-top:8px;">A learning project · May 2026</div>
+</footer>
+
+<!-- ===================== SCRIPTS ===================== -->
+<script type="module">
+  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4';
+
+  const SUPABASE_URL = 'https://esxlbchrfdhrsoumroub.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_UC3Y9ngaCEpzfonAkM8teQ_1vFvYv4d';
+  const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  const $ = (sel, el = document) => el.querySelector(sel);
+  const $$ = (sel, el = document) => [...el.querySelectorAll(sel)];
+
+  const STAR_FILLED = '★';
+  const STAR_EMPTY = '☆';
+
+  // Escape user content & content from DB for safe HTML insertion
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[c]));
+
+  const mapsLink = (addr) =>
+    `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(addr)}`;
+
+  // Render one stop card
+  function renderStop(stop) {
+    const must = (stop.must_order || [])
+      .map((m) => `<li>${esc(m)}</li>`)
+      .join('');
+
+    const findIt = stop.find_it
+      ? `<div class="stop-row"><dt>Find it</dt><dd>${esc(stop.find_it)}</dd></div>`
+      : '';
+
+    const whyHere = stop.why_here
+      ? `<div class="stop-row"><dt>Why here</dt><dd>${esc(stop.why_here)}</dd></div>`
+      : '';
+
+    const warning = stop.warning
+      ? `<div class="stop-warning"><span class="icon">⚠ TIMING</span>${esc(stop.warning)}</div>`
+      : '';
+
+    const arriveBy = stop.arrive_by
+      ? ` · Target arrival <strong>${esc(stop.arrive_by)}</strong>`
+      : '';
+
+    return `
+      <article class="stop loaded" data-stop-id="${stop.id}">
+        <div class="stop-stamp">Stop ${String(stop.order_index).padStart(2, '0')}</div>
+        <div class="stop-head">
+          <h3 class="stop-name">${esc(stop.name)}</h3>
+          <div class="stop-rating" id="rating-display-${stop.id}">— no ratings yet —</div>
+        </div>
+        <p class="stop-cuisine">${esc(stop.cuisine)}</p>
+        <p class="stop-meta">
+          <a href="${mapsLink(stop.address)}" target="_blank" rel="noopener">${esc(stop.address)} ↗</a>${arriveBy}
+        </p>
+        ${warning}
+        <dl style="margin:0;">
+          <div class="stop-row"><dt>Style</dt><dd>${esc(stop.style)}</dd></div>
+          ${findIt}
+          ${whyHere}
+          <div class="stop-row"><dt>What to order</dt><dd><ul class="must-order">${must}</ul></dd></div>
+        </dl>
+        <p class="stop-strategy">${esc(stop.strategy)}</p>
+      </article>
+    `;
+  }
+
+  // The walk interlude between stops
+  function renderWalk(toStop) {
+    if (!toStop.walk_minutes) return '';
+    return `
+      <div class="walk">
+        <span class="arrow">↓</span> Walk <span class="min">${toStop.walk_minutes} min</span>
+        <span class="walk-dir">${esc(toStop.walk_direction || '')}</span>
+      </div>
+    `;
+  }
+
+  // The 74th St detour callout - injected after stop 3, before stop 4
+  const detourHTML = `
+    <div class="detour">
+      <h3>Wander 74th Street</h3>
+      <p>Between Playground and Khampa Kitchen, route the group up 74th St between Roosevelt and 37th Ave. This is the densest, most overwhelming-in-the-best-way stretch in Jackson Heights — sari shops, jewelry stores, Bangladeshi grocery markets, paan stalls, Bollywood music spilling onto the sidewalk.</p>
+      <p><strong>What you'll see:</strong></p>
+      <ul>
+        <li>Patel Brothers — the legendary South Asian grocery anchor</li>
+        <li>A dozen sari and jewelry shops (Butala Emporium, Apna Bazaar)</li>
+        <li>Diversity Plaza (37th Rd) — the pedestrian heart of the neighborhood</li>
+        <li>Sugarcane juice carts, paan stalls, Bangladeshi sweets shops</li>
+      </ul>
+      <p><strong>How to run it:</strong> Give the group 15 minutes to wander on their own from Roosevelt &amp; 74th up to 37th Ave. Regroup at the 37th Ave corner, then walk east to Khampa Kitchen together. The neighborhood rewards aimlessness more than any other in NYC.</p>
+    </div>
+  `;
+
+  // Build a rating card for the rate section
+  function renderRateCard(stop) {
+    return `
+      <article class="rate-card loaded" data-stop-id="${stop.id}">
+        <div class="rc-num">
+          STOP
+          <strong>${String(stop.order_index).padStart(2, '0')}</strong>
+        </div>
+        <div>
+          <h3>${esc(stop.name)}</h3>
+          <p class="rc-cuisine">${esc(stop.cuisine)}</p>
+
+          <div class="stars-input" data-stop-id="${stop.id}" role="radiogroup" aria-label="Rate ${esc(stop.name)}">
+            ${[1, 2, 3, 4, 5].map((n) =>
+              `<button type="button" data-val="${n}" aria-label="${n} star${n > 1 ? 's' : ''}">${STAR_EMPTY}</button>`
+            ).join('')}
+          </div>
+
+          <input type="text" placeholder="Your name (optional)" maxlength="50" class="name-input">
+          <textarea placeholder="A quick note (optional, 500 char max)" maxlength="500" class="comment-input"></textarea>
+
+          <div>
+            <button class="submit" type="button" disabled>Submit rating</button>
+            <span class="status"></span>
+          </div>
+
+          <div class="recent" id="recent-${stop.id}" hidden>
+            <div class="recent-head">Recent ratings</div>
+            <div class="recent-list"></div>
+          </div>
+        </div>
+      </article>
+    `;
+  }
+
+  // Aggregate ratings per stop
+  function aggregate(ratings) {
+    const byStop = new Map();
+    for (const r of ratings) {
+      if (!byStop.has(r.stop_id)) byStop.set(r.stop_id, []);
+      byStop.get(r.stop_id).push(r);
+    }
+    return byStop;
+  }
+
+  function avg(arr) {
+    return arr.reduce((s, r) => s + r.rating, 0) / arr.length;
+  }
+
+  function starsString(n, max = 5) {
+    const full = Math.round(n);
+    return STAR_FILLED.repeat(full) + STAR_EMPTY.repeat(max - full);
+  }
+
+  // Update aggregate display for each stop
+  function updateRatingDisplays(byStop) {
+    for (const stopId of byStop.keys()) {
+      const ratings = byStop.get(stopId);
+      const a = avg(ratings);
+      const el = document.getElementById(`rating-display-${stopId}`);
+      if (el) {
+        el.classList.add('has-ratings');
+        el.innerHTML = `<span class="stars">${starsString(a)}</span> · ${a.toFixed(1)} · ${ratings.length} rating${ratings.length === 1 ? '' : 's'}`;
+      }
+
+      // Update recent list in rate card
+      const recentEl = document.getElementById(`recent-${stopId}`);
+      if (recentEl) {
+        const list = recentEl.querySelector('.recent-list');
+        const recent = ratings.slice(0, 5);
+        if (recent.length) {
+          recentEl.hidden = false;
+          list.innerHTML = recent.map((r) => `
+            <div class="recent-item">
+              <span class="stars-small">${starsString(r.rating)}</span>
+              ${r.rater_name ? `<span class="who">${esc(r.rater_name)}</span>: ` : ''}${esc(r.comment || (r.rater_name ? '' : 'rated it'))}
+            </div>
+          `).join('');
+        }
+      }
+    }
+  }
+
+  // Wire up the star buttons and submit for one rate card
+  function wireRateCard(card) {
+    const stopId = parseInt(card.dataset.stopId, 10);
+    const starsEl = card.querySelector('.stars-input');
+    const buttons = $$('button', starsEl);
+    const submitBtn = card.querySelector('.submit');
+    const statusEl = card.querySelector('.status');
+    const nameEl = card.querySelector('.name-input');
+    const commentEl = card.querySelector('.comment-input');
+
+    let value = 0;
+
+    function paint(val, preview = false) {
+      starsEl.classList.toggle('has-preview', preview);
+      buttons.forEach((b, i) => {
+        const isOn = i < val;
+        b.classList.toggle(preview ? 'preview-on' : 'on', isOn);
+        if (!preview) b.classList.remove('preview-on');
+        b.textContent = isOn ? STAR_FILLED : STAR_EMPTY;
+      });
+    }
+
+    buttons.forEach((b, i) => {
+      b.addEventListener('mouseenter', () => paint(i + 1, true));
+      b.addEventListener('focus', () => paint(i + 1, true));
+      b.addEventListener('click', () => {
+        value = i + 1;
+        paint(value, false);
+        submitBtn.disabled = false;
+      });
+    });
+    starsEl.addEventListener('mouseleave', () => paint(value, false));
+
+    submitBtn.addEventListener('click', async () => {
+      if (!value) return;
+      submitBtn.disabled = true;
+      statusEl.classList.remove('error');
+      statusEl.textContent = 'Saving…';
+
+      const payload = {
+        stop_id: stopId,
+        rating: value,
+        comment: commentEl.value.trim() || null,
+        rater_name: nameEl.value.trim() || null,
+      };
+
+      const { error } = await sb.from('ratings').insert(payload);
+      if (error) {
+        console.error(error);
+        statusEl.classList.add('error');
+        statusEl.textContent = 'Error — try again';
+        submitBtn.disabled = false;
+        return;
+      }
+
+      statusEl.textContent = '✓ Thanks!';
+      commentEl.value = '';
+      // Refresh aggregate display
+      await loadRatings();
+    });
+  }
+
+  async function loadStops() {
+    const { data: stops, error } = await sb
+      .from('stops')
+      .select('*')
+      .order('order_index');
+
+    if (error || !stops) {
+      console.error('Failed to load stops:', error);
+      $('#stops-container').innerHTML = `<p style="text-align:center;color:var(--chili)">Couldn't load stops from the database. Refresh to try again.</p>`;
+      return null;
+    }
+
+    // Render the stop cards with walking interludes
+    const parts = [];
+    stops.forEach((stop, i) => {
+      if (i > 0) parts.push(renderWalk(stop));
+      parts.push(renderStop(stop));
+      // Inject the 74th St detour after stop 3 (Playground)
+      if (stop.order_index === 3) parts.push(detourHTML);
+    });
+    $('#stops-container').innerHTML = parts.join('');
+
+    // Render rate cards
+    $('#rate-cards-container').innerHTML = stops.map(renderRateCard).join('');
+    $$('.rate-card').forEach(wireRateCard);
+
+    return stops;
+  }
+
+  async function loadRatings() {
+    const { data, error } = await sb
+      .from('ratings')
+      .select('stop_id, rating, comment, rater_name, created_at')
+      .order('created_at', { ascending: false });
+
+    if (error) { console.error(error); return; }
+    updateRatingDisplays(aggregate(data || []));
+  }
+
+  // Toggle the rating section
+  $('#reveal-rate').addEventListener('click', () => {
+    const sec = $('#rating-section');
+    const btn = $('#reveal-rate');
+    if (sec.hidden) {
+      sec.hidden = false;
+      btn.textContent = '★  Hide ratings';
+      btn.classList.add('is-open');
+      setTimeout(() => sec.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+    } else {
+      sec.hidden = true;
+      btn.textContent = '★  Rate the Stops';
+      btn.classList.remove('is-open');
+      $('#rate-cta').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+
+  // Boot
+  (async () => {
+    await loadStops();
+    await loadRatings();
+  })();
+</script>
+</body>
+</html>
