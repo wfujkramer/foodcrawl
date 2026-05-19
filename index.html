@@ -3,286 +3,307 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="The First Annual Jackson Heights & Elmhurst Food Crawl — May 16, 2026. Six stops across Bangladeshi, Pakistani, Thai, Tibetan, and Mexican kitchens. Built on Netlify + Supabase.">
-<meta name="theme-color" content="#f4ecdc">
+<meta name="description" content="The First Annual Jackson Heights & Elmhurst Food Crawl — May 16, 2026. Six stops across Bangladeshi, Pakistani, Thai, Tibetan, and Mexican kitchens.">
+<meta name="theme-color" content="#fafafa">
 <title>Jackson Heights &amp; Elmhurst Food Crawl · May 16 2026</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300..900,0..100&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..600&family=DM+Sans:opsz,wght@9..40,300..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 
 <style>
   :root {
-    --bg: #f4ecdc;
-    --paper: #fbf6ea;
-    --paper-warm: #f8efd9;
-    --ink: #1c1612;
-    --ink-soft: #4a3f35;
-    --ink-faint: #8a7c6b;
-    --rule: #d8cbb0;
-    --rule-soft: #e6dcc4;
-    --saffron: #c9701c;
-    --saffron-deep: #a85510;
-    --chili: #b1330d;
-    --sage: #5e7d3c;
-    --stamp: #8b1f0a;
-    --stamp-ink: #6a1607;
+    --bg: #fafafa;
+    --surface: #ffffff;
+    --surface-2: #f5f5f4;
+
+    --ink: #0a0a0a;
+    --ink-2: #404040;
+    --ink-3: #737373;
+    --ink-4: #a3a3a3;
+
+    --line: #e5e5e5;
+    --line-soft: #f0f0f0;
+
+    --accent: #047857;
+    --accent-deep: #064e3b;
+    --accent-soft: #ecfdf5;
+
+    --gold: #ca8a04;
+    --red: #dc2626;
+    --red-soft: #fef2f2;
 
     --display: 'Fraunces', 'Times New Roman', serif;
-    --body: 'Newsreader', 'Georgia', serif;
+    --sans: 'DM Sans', system-ui, -apple-system, sans-serif;
     --mono: 'JetBrains Mono', ui-monospace, monospace;
 
-    --measure: 64ch;
     --pad: clamp(20px, 5vw, 56px);
+    --radius: 6px;
   }
 
   *, *::before, *::after { box-sizing: border-box; }
-
   html { -webkit-text-size-adjust: 100%; }
 
   body {
     margin: 0;
-    font-family: var(--body);
-    font-optical-sizing: auto;
-    font-size: 18px;
+    font-family: var(--sans);
+    font-size: 17px;
     line-height: 1.55;
     color: var(--ink);
     background: var(--bg);
-    background-image:
-      radial-gradient(at 0% 0%, rgba(201, 112, 28, 0.05), transparent 60%),
-      radial-gradient(at 100% 100%, rgba(94, 125, 60, 0.05), transparent 60%);
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
+  ::selection { background: var(--accent); color: var(--surface); }
 
-  /* subtle paper texture */
-  body::before {
-    content: '';
-    position: fixed; inset: 0;
-    pointer-events: none;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence baseFrequency='0.85' numOctaves='2' seed='5'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.04 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
-    z-index: 9999;
-    mix-blend-mode: multiply;
-    opacity: 0.6;
-  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 var(--pad); }
+  .wrap-wide { max-width: 1040px; margin: 0 auto; padding: 0 var(--pad); }
 
-  .wrap {
-    max-width: 760px;
-    margin: 0 auto;
-    padding: 0 var(--pad);
-  }
+  a { color: inherit; text-decoration-color: var(--accent); text-underline-offset: 4px; text-decoration-thickness: 1px; }
+  a:hover { color: var(--accent-deep); }
 
-  .wrap-wide {
-    max-width: 980px;
-    margin: 0 auto;
-    padding: 0 var(--pad);
-  }
-
-  a { color: inherit; text-decoration-color: var(--saffron); text-underline-offset: 3px; }
-  a:hover { color: var(--saffron-deep); }
-
-  /* ===== MASTHEAD ===== */
+  /* MASTHEAD */
   header.masthead {
-    padding: clamp(48px, 8vw, 96px) 0 clamp(40px, 6vw, 72px);
+    padding: clamp(56px, 9vw, 120px) 0 clamp(40px, 6vw, 72px);
     text-align: center;
-    border-bottom: 2px solid var(--ink);
-    position: relative;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
   }
-
   .eyebrow {
     font-family: var(--mono);
     font-size: 11px;
-    letter-spacing: 0.22em;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: var(--stamp);
+    color: var(--accent);
     margin-bottom: 28px;
+    font-weight: 500;
   }
-
-  .eyebrow b { font-weight: 700; }
-
   h1.title {
     font-family: var(--display);
     font-weight: 400;
-    font-size: clamp(48px, 11vw, 112px);
-    line-height: 0.92;
-    letter-spacing: -0.025em;
-    margin: 0 0 24px;
-    font-variation-settings: "opsz" 144, "SOFT" 30;
+    font-size: clamp(44px, 9vw, 96px);
+    line-height: 0.96;
+    letter-spacing: -0.03em;
+    margin: 0 0 28px;
+    color: var(--ink);
+    font-variation-settings: "opsz" 144;
   }
-
-  h1.title em {
-    font-style: italic;
-    font-weight: 300;
-    color: var(--saffron-deep);
-    font-variation-settings: "opsz" 144, "SOFT" 50;
-  }
+  h1.title em { font-style: italic; font-weight: 300; color: var(--accent-deep); }
 
   .cuisines {
-    font-family: var(--body);
-    font-style: italic;
-    font-size: clamp(15px, 2.2vw, 19px);
-    color: var(--ink-soft);
-    letter-spacing: 0.03em;
-    margin: 12px 0 36px;
+    font-family: var(--sans);
+    font-size: 14px;
+    color: var(--ink-3);
+    letter-spacing: 0.04em;
+    margin: 16px 0 32px;
+    text-transform: uppercase;
   }
-  .cuisines span { white-space: nowrap; }
   .cuisines .dot {
     display: inline-block;
-    width: 4px; height: 4px;
-    background: var(--saffron);
+    width: 3px; height: 3px;
+    background: var(--ink-4);
     border-radius: 50%;
-    margin: 0 12px 4px;
+    margin: 0 12px 3px;
     vertical-align: middle;
   }
 
   .party {
     font-family: var(--mono);
-    font-size: 12px;
-    letter-spacing: 0.14em;
+    font-size: 11px;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--ink-soft);
-    margin: 0 0 40px;
+    color: var(--ink-3);
+    margin: 0 0 48px;
   }
 
-  /* ===== STATS GRID ===== */
   .stats {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 0;
-    border-top: 1px solid var(--ink);
-    border-bottom: 1px solid var(--ink);
-    margin: 32px 0 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    max-width: 600px;
+    margin: 0 auto;
   }
-  .stats > div {
-    padding: 20px 8px;
-    border-right: 1px solid var(--rule);
-    text-align: center;
-  }
+  .stats > div { padding: 24px 8px; border-right: 1px solid var(--line); text-align: center; }
   .stats > div:last-child { border-right: none; }
   .stats .num {
     display: block;
     font-family: var(--display);
-    font-size: clamp(28px, 5vw, 42px);
-    font-weight: 500;
+    font-size: clamp(28px, 5vw, 38px);
+    font-weight: 400;
     line-height: 1;
-    font-variation-settings: "opsz" 144;
+    letter-spacing: -0.02em;
+    color: var(--ink);
   }
+  .stats .num small { font-size: 0.5em; color: var(--ink-3); font-weight: 400; margin-left: 2px; }
   .stats .label {
     display: block;
     font-family: var(--mono);
     font-size: 10px;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: var(--ink-faint);
-    margin-top: 8px;
+    color: var(--ink-3);
+    margin-top: 10px;
   }
 
   @media (max-width: 540px) {
     .stats { grid-template-columns: repeat(2, 1fr); }
     .stats > div:nth-child(2) { border-right: none; }
-    .stats > div:nth-child(1), .stats > div:nth-child(2) {
-      border-bottom: 1px solid var(--rule);
-    }
+    .stats > div:nth-child(1), .stats > div:nth-child(2) { border-bottom: 1px solid var(--line); }
   }
 
-  /* ===== SECTIONS ===== */
-  section { padding: clamp(48px, 8vw, 88px) 0; }
-  section + section { padding-top: 0; }
-
+  /* SECTIONS */
+  section { padding: clamp(56px, 8vw, 96px) 0; }
+  .section-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 16px;
+  }
   h2.section-head {
     font-family: var(--display);
-    font-weight: 500;
-    font-size: clamp(28px, 5vw, 42px);
-    letter-spacing: -0.015em;
-    margin: 0 0 24px;
-    font-variation-settings: "opsz" 144, "SOFT" 20;
+    font-weight: 400;
+    font-size: clamp(32px, 5vw, 48px);
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    margin: 0 0 32px;
+    font-variation-settings: "opsz" 144;
   }
-
-  h2.section-head .num-mark {
-    font-family: var(--mono);
-    font-weight: 500;
-    font-size: 12px;
-    letter-spacing: 0.18em;
-    color: var(--stamp);
-    vertical-align: top;
-    display: block;
-    margin-bottom: 12px;
-  }
+  h2.section-head em { font-style: italic; font-weight: 300; }
 
   p.lede {
-    font-family: var(--body);
-    font-size: clamp(18px, 2.4vw, 21px);
+    font-family: var(--sans);
+    font-size: clamp(18px, 2.2vw, 21px);
     line-height: 1.55;
-    color: var(--ink-soft);
-    max-width: var(--measure);
+    color: var(--ink-2);
+    max-width: 60ch;
   }
-
   p.lede strong { color: var(--ink); font-weight: 600; }
 
-  /* ===== HOW TO RUN ===== */
-  ul.tips {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    counter-reset: tip;
+  /* MAP */
+  .map-section {
+    padding: clamp(40px, 6vw, 72px) 0;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
   }
+  .map-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .map-header h2 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(24px, 3.5vw, 32px);
+    margin: 0;
+    letter-spacing: -0.015em;
+  }
+  .map-header .map-meta {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-3);
+    letter-spacing: 0.06em;
+  }
+  #map {
+    height: clamp(360px, 55vh, 520px);
+    width: 100%;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface-2);
+    overflow: hidden;
+  }
+  .map-marker {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    border: 2px solid var(--surface);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  }
+  .leaflet-popup-content-wrapper {
+    border-radius: 4px !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.12) !important;
+  }
+  .leaflet-popup-content {
+    margin: 12px 14px !important;
+    font-family: var(--sans) !important;
+    line-height: 1.4 !important;
+  }
+  .leaflet-popup-content .pop-name {
+    font-family: var(--display);
+    font-size: 17px;
+    font-weight: 500;
+    margin-bottom: 2px;
+    color: var(--ink);
+  }
+  .leaflet-popup-content .pop-cuisine { font-size: 13px; color: var(--ink-3); font-style: italic; }
+  .leaflet-container a.leaflet-popup-close-button { color: var(--ink-3) !important; }
+
+  /* TIPS */
+  ul.tips { list-style: none; padding: 0; margin: 0; counter-reset: tip; }
   ul.tips li {
     counter-increment: tip;
     display: grid;
-    grid-template-columns: 36px 1fr;
+    grid-template-columns: 48px 1fr;
     gap: 16px;
-    padding: 18px 0;
-    border-bottom: 1px solid var(--rule-soft);
-    font-size: 17px;
-    line-height: 1.5;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--line-soft);
+    font-size: 16.5px;
+    line-height: 1.55;
+    color: var(--ink-2);
   }
   ul.tips li::before {
     content: counter(tip, decimal-leading-zero);
     font-family: var(--mono);
     font-size: 11px;
-    color: var(--stamp);
-    letter-spacing: 0.12em;
+    color: var(--accent);
+    letter-spacing: 0.08em;
     padding-top: 4px;
+    font-weight: 500;
   }
   ul.tips li:last-child { border-bottom: none; }
-  ul.tips strong { color: var(--chili); font-weight: 600; }
+  ul.tips strong { color: var(--ink); font-weight: 600; }
 
-  /* ===== STOP CARDS ===== */
-  .stops-section {
-    background: linear-gradient(180deg, var(--bg) 0%, var(--paper-warm) 8%, var(--paper-warm) 92%, var(--bg) 100%);
-    padding: clamp(56px, 9vw, 96px) 0;
-    border-top: 2px solid var(--ink);
-    border-bottom: 2px solid var(--ink);
-  }
-
-  .stops-section h2.section-head {
-    text-align: center;
-    margin-bottom: 56px;
-  }
+  /* STOPS */
+  .stops-section { background: var(--bg); }
 
   .stop {
-    background: var(--paper);
-    border: 1px solid var(--rule);
-    border-radius: 2px;
-    padding: clamp(28px, 5vw, 48px);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: clamp(28px, 5vw, 44px);
     margin-bottom: 24px;
     position: relative;
-    box-shadow: 0 1px 0 var(--rule-soft), 0 12px 32px -20px rgba(28, 22, 18, 0.18);
+    transition: border-color 0.15s ease;
   }
+  .stop:hover { border-color: var(--ink-4); }
 
-  .stop-stamp {
-    position: absolute;
-    top: -14px;
-    left: clamp(20px, 4vw, 36px);
-    background: var(--stamp);
-    color: var(--paper);
+  .stop-tag {
+    display: inline-block;
     font-family: var(--mono);
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.22em;
-    padding: 8px 14px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
-    transform: rotate(-1.5deg);
-    box-shadow: 2px 2px 0 rgba(0,0,0,0.08);
+    background: var(--accent-soft);
+    color: var(--accent-deep);
+    padding: 5px 10px;
+    border-radius: 3px;
+    margin-bottom: 20px;
   }
 
   .stop-head {
@@ -291,156 +312,152 @@
     align-items: baseline;
     justify-content: space-between;
     gap: 16px;
-    margin-top: 8px;
     margin-bottom: 8px;
   }
-
   .stop-name {
     font-family: var(--display);
-    font-weight: 500;
-    font-size: clamp(32px, 6vw, 52px);
-    line-height: 1;
+    font-weight: 400;
+    font-size: clamp(30px, 5vw, 44px);
+    line-height: 1.05;
     margin: 0;
     letter-spacing: -0.02em;
-    font-variation-settings: "opsz" 144, "SOFT" 30;
+    color: var(--ink);
+    font-variation-settings: "opsz" 144;
   }
-
   .stop-rating {
     font-family: var(--mono);
     font-size: 11px;
-    letter-spacing: 0.12em;
-    color: var(--ink-faint);
+    letter-spacing: 0.08em;
+    color: var(--ink-4);
     text-transform: uppercase;
     white-space: nowrap;
-    padding-top: 6px;
+    padding-top: 8px;
   }
-  .stop-rating .stars { color: var(--saffron); letter-spacing: 0; font-size: 14px; }
-  .stop-rating.has-ratings { color: var(--ink-soft); }
+  .stop-rating .stars { color: var(--gold); letter-spacing: 0; font-size: 14px; margin-right: 4px; }
+  .stop-rating.has-ratings { color: var(--ink-2); }
 
   .stop-cuisine {
-    font-family: var(--body);
+    font-family: var(--sans);
     font-style: italic;
-    font-size: 19px;
-    color: var(--saffron-deep);
-    margin: 0 0 14px;
+    font-size: 16px;
+    color: var(--accent-deep);
+    margin: 0 0 16px;
   }
-
   .stop-meta {
     font-family: var(--mono);
     font-size: 12px;
-    letter-spacing: 0.04em;
-    color: var(--ink-soft);
-    margin: 0 0 28px;
+    letter-spacing: 0.02em;
+    color: var(--ink-3);
+    margin: 0 0 24px;
     padding-bottom: 24px;
-    border-bottom: 1px dashed var(--rule);
+    border-bottom: 1px solid var(--line-soft);
   }
-  .stop-meta a {
-    text-decoration: underline;
-    text-decoration-color: var(--saffron);
-    text-decoration-thickness: 1px;
-  }
+  .stop-meta a { text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 1px; }
+  .stop-meta a:hover { text-decoration-color: var(--accent-deep); }
+  .stop-meta .sep { color: var(--ink-4); margin: 0 8px; }
 
   .stop-warning {
-    background: var(--chili);
-    color: var(--paper);
+    background: var(--red-soft);
+    border: 1px solid #fecaca;
+    color: #991b1b;
     padding: 14px 18px;
     margin: 0 0 24px;
     font-size: 14px;
-    line-height: 1.4;
-    font-weight: 500;
+    line-height: 1.45;
+    border-radius: 4px;
   }
   .stop-warning .icon {
     font-family: var(--mono);
-    font-weight: 700;
-    letter-spacing: 0.18em;
-    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    font-size: 10px;
     display: block;
     margin-bottom: 4px;
-    opacity: 0.85;
+    color: var(--red);
+    text-transform: uppercase;
   }
 
   .stop-row {
     display: grid;
-    grid-template-columns: 110px 1fr;
+    grid-template-columns: 130px 1fr;
     gap: 24px;
-    padding: 14px 0;
-    border-top: 1px solid var(--rule-soft);
+    padding: 16px 0;
+    border-top: 1px solid var(--line-soft);
   }
-  .stop-row:last-of-type { border-bottom: 1px solid var(--rule-soft); }
+  .stop-row:first-of-type { border-top: none; padding-top: 4px; }
   .stop-row dt {
     font-family: var(--mono);
     font-size: 10px;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: var(--ink-faint);
-    padding-top: 4px;
+    color: var(--ink-3);
+    padding-top: 3px;
+    font-weight: 500;
   }
-  .stop-row dd {
-    margin: 0;
-    font-size: 16px;
-    line-height: 1.55;
-  }
+  .stop-row dd { margin: 0; font-size: 15.5px; line-height: 1.55; color: var(--ink-2); }
 
-  ul.must-order {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
+  ul.must-order { list-style: none; padding: 0; margin: 0; }
   ul.must-order li {
-    padding: 4px 0 4px 22px;
+    padding: 3px 0 3px 20px;
     position: relative;
-    font-size: 16px;
+    font-size: 15.5px;
+    color: var(--ink-2);
   }
   ul.must-order li::before {
-    content: '◆';
+    content: '';
     position: absolute;
     left: 0;
-    color: var(--saffron);
-    font-size: 10px;
-    top: 8px;
+    top: 12px;
+    width: 6px;
+    height: 1px;
+    background: var(--accent);
   }
 
   .stop-strategy {
-    font-family: var(--body);
+    font-family: var(--display);
+    font-style: italic;
+    font-weight: 300;
     font-size: 17px;
     line-height: 1.6;
-    color: var(--ink-soft);
-    font-style: italic;
+    color: var(--ink-2);
     margin: 24px 0 0;
-    padding: 20px 0 0;
-    border-top: 1px solid var(--rule-soft);
+    padding: 24px 0 0;
+    border-top: 1px solid var(--line-soft);
+    font-variation-settings: "opsz" 72;
   }
 
-  @media (max-width: 540px) {
-    .stop-row { grid-template-columns: 1fr; gap: 4px; }
+  @media (max-width: 560px) {
+    .stop-row { grid-template-columns: 1fr; gap: 6px; padding: 14px 0; }
     .stop-row dt { padding-top: 0; }
   }
 
-  /* ===== WALK INTERLUDE ===== */
+  /* WALK */
   .walk {
     text-align: center;
-    padding: 24px 0;
+    padding: 18px 0;
     margin: 0;
     font-family: var(--mono);
-    font-size: 12px;
+    font-size: 11px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--ink-soft);
+    color: var(--ink-3);
   }
-  .walk .arrow {
-    font-size: 18px;
-    color: var(--saffron);
-    margin-right: 8px;
+  .walk .line {
+    display: inline-block;
+    width: 24px;
+    height: 1px;
+    background: var(--ink-4);
+    margin: 0 12px 4px;
     vertical-align: middle;
   }
-  .walk .min { color: var(--stamp); font-weight: 700; }
+  .walk .min { color: var(--accent); font-weight: 600; }
   .walk-dir {
     display: block;
-    margin-top: 8px;
-    font-family: var(--body);
+    margin-top: 6px;
+    font-family: var(--sans);
     font-style: italic;
-    font-size: 14px;
-    color: var(--ink-faint);
+    font-size: 13px;
+    color: var(--ink-3);
     letter-spacing: 0;
     text-transform: none;
     max-width: 480px;
@@ -448,441 +465,391 @@
     margin-right: auto;
   }
 
-  /* ===== 74TH ST DETOUR CALLOUT ===== */
+  /* DETOUR */
   .detour {
-    background: #fef3c7;
-    border: 1.5px solid var(--ink);
-    padding: clamp(24px, 5vw, 36px);
-    margin: 32px 0;
-    position: relative;
+    background: var(--accent-soft);
+    border: 1px solid #a7f3d0;
+    padding: clamp(24px, 4vw, 36px);
+    margin: 28px 0;
+    border-radius: var(--radius);
   }
-  .detour::before {
-    content: '★  OPTIONAL DETOUR';
+  .detour-tag {
     display: inline-block;
-    background: var(--ink);
-    color: #fef3c7;
+    background: var(--accent-deep);
+    color: var(--surface);
     font-family: var(--mono);
     font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.2em;
-    padding: 6px 12px;
-    margin-bottom: 20px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    padding: 5px 10px;
+    border-radius: 3px;
+    margin-bottom: 18px;
+    text-transform: uppercase;
   }
   .detour h3 {
     font-family: var(--display);
-    font-weight: 500;
-    font-size: clamp(22px, 3.5vw, 30px);
-    margin: 0 0 16px;
-    font-variation-settings: "opsz" 144;
+    font-weight: 400;
+    font-size: clamp(22px, 3.2vw, 28px);
+    margin: 0 0 14px;
+    letter-spacing: -0.015em;
+    color: var(--ink);
   }
-  .detour p { margin: 0 0 14px; font-size: 16px; line-height: 1.55; }
-  .detour ul {
-    list-style: none;
-    padding: 0;
-    margin: 14px 0;
-    font-size: 15px;
-  }
-  .detour ul li {
-    padding: 4px 0 4px 18px;
-    position: relative;
-  }
+  .detour p { margin: 0 0 12px; font-size: 15.5px; line-height: 1.55; color: var(--ink-2); }
+  .detour ul { list-style: none; padding: 0; margin: 12px 0; font-size: 15px; color: var(--ink-2); }
+  .detour ul li { padding: 3px 0 3px 18px; position: relative; }
   .detour ul li::before {
-    content: '—';
+    content: '';
     position: absolute;
     left: 0;
-    color: var(--ink-faint);
+    top: 13px;
+    width: 6px;
+    height: 1px;
+    background: var(--accent-deep);
   }
 
-  /* ===== TABLES ===== */
-  .data-section { padding-top: 0; }
-
+  /* TABLES */
   table.guide-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 15px;
-    margin: 16px 0 8px;
+    font-size: 14.5px;
+    margin: 8px 0;
   }
-  table.guide-table th,
-  table.guide-table td {
+  table.guide-table th, table.guide-table td {
     text-align: left;
-    padding: 12px 16px 12px 0;
-    border-bottom: 1px solid var(--rule-soft);
+    padding: 14px 16px 14px 0;
+    border-bottom: 1px solid var(--line-soft);
     vertical-align: top;
+    color: var(--ink-2);
   }
   table.guide-table th {
     font-family: var(--mono);
     font-size: 10px;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: var(--ink-faint);
+    color: var(--ink-3);
     font-weight: 500;
-    border-bottom: 1.5px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
     white-space: nowrap;
   }
-  table.guide-table .num-col { width: 32px; color: var(--stamp); font-family: var(--mono); font-weight: 700; }
-  table.guide-table .name-col { font-family: var(--display); font-weight: 500; font-size: 17px; }
-  table.guide-table .time-col { font-family: var(--mono); font-size: 13px; font-weight: 500; white-space: nowrap; color: var(--stamp); }
+  table.guide-table .num-col { width: 32px; color: var(--accent); font-family: var(--mono); font-weight: 600; }
+  table.guide-table .name-col {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: 17px;
+    color: var(--ink);
+    font-variation-settings: "opsz" 72;
+  }
+  table.guide-table .time-col {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    color: var(--accent);
+  }
 
   @media (max-width: 600px) {
-    table.guide-table th, table.guide-table td { font-size: 13px; padding: 10px 8px 10px 0; }
+    table.guide-table th, table.guide-table td { font-size: 13px; padding: 12px 8px 12px 0; }
     table.guide-table .name-col { font-size: 15px; }
     table.guide-table .hide-mobile { display: none; }
   }
 
-  /* ===== STRATEGY ===== */
-  .strategy-block {
-    margin: 32px 0;
-    padding: 24px 0;
-    border-top: 1px solid var(--rule);
-  }
+  /* STRATEGY */
+  .strategy-block { margin: 28px 0; padding: 28px 0; border-top: 1px solid var(--line); }
+  .strategy-block:first-child { border-top: none; padding-top: 0; }
   .strategy-block h3 {
     font-family: var(--display);
     font-weight: 500;
     font-size: 22px;
     margin: 0 0 12px;
-    font-variation-settings: "opsz" 72, "SOFT" 30;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+    font-variation-settings: "opsz" 72;
   }
-  .strategy-block p { margin: 0 0 12px; font-size: 16px; line-height: 1.6; }
-  .strategy-block ul { padding-left: 20px; margin: 0; }
-  .strategy-block ul li { font-size: 16px; margin: 6px 0; }
+  .strategy-block p { margin: 0 0 12px; font-size: 15.5px; line-height: 1.6; color: var(--ink-2); }
+  .strategy-block ul { padding-left: 18px; margin: 0; color: var(--ink-2); }
+  .strategy-block ul li { font-size: 15.5px; margin: 6px 0; }
 
-  /* ===== RATE BUTTON ===== */
+  /* RATE CTA */
   .rate-cta {
     text-align: center;
-    padding: clamp(64px, 10vw, 96px) 0;
-    background: var(--ink);
-    color: var(--bg);
-    position: relative;
-  }
-  .rate-cta::before, .rate-cta::after {
-    content: '';
-    position: absolute;
-    left: 0; right: 0;
-    height: 8px;
-    background-image: linear-gradient(90deg, var(--saffron) 0 25%, transparent 25% 50%, var(--chili) 50% 75%, transparent 75% 100%);
-    background-size: 24px 8px;
-  }
-  .rate-cta::before { top: 0; }
-  .rate-cta::after { bottom: 0; }
-
-  .rate-cta .eyebrow {
-    color: var(--saffron);
-    margin-bottom: 16px;
+    padding: clamp(56px, 8vw, 88px) 0;
+    background: var(--surface);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
   }
   .rate-cta h2 {
     font-family: var(--display);
     font-weight: 400;
-    font-size: clamp(32px, 6vw, 56px);
-    margin: 0 0 12px;
-    color: var(--bg);
-    font-variation-settings: "opsz" 144, "SOFT" 50;
+    font-size: clamp(30px, 5vw, 44px);
+    margin: 0 0 14px;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    font-variation-settings: "opsz" 144;
   }
-  .rate-cta h2 em { color: var(--saffron); font-style: italic; }
+  .rate-cta h2 em { color: var(--accent-deep); font-style: italic; font-weight: 300; }
   .rate-cta p {
-    color: rgba(244, 236, 220, 0.7);
-    max-width: 460px;
-    margin: 0 auto 36px;
+    color: var(--ink-3);
+    max-width: 440px;
+    margin: 0 auto 32px;
     font-size: 16px;
     line-height: 1.55;
   }
+
   .big-btn {
-    font-family: var(--mono);
+    font-family: var(--sans);
     font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    background: var(--saffron);
-    color: var(--ink);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    background: var(--ink);
+    color: var(--surface);
     border: none;
-    padding: 22px 36px;
+    padding: 16px 32px;
+    border-radius: 999px;
     cursor: pointer;
-    transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
-    box-shadow: 4px 4px 0 var(--bg);
+    transition: background 0.15s ease, transform 0.1s ease;
   }
-  .big-btn:hover {
-    background: #e08a36;
-    transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0 var(--bg);
-  }
-  .big-btn:active {
-    transform: translate(2px, 2px);
-    box-shadow: 0 0 0 var(--bg);
-  }
-  .big-btn.is-open { background: var(--bg); color: var(--ink); }
+  .big-btn:hover { background: var(--accent-deep); }
+  .big-btn:active { transform: translateY(1px); }
+  .big-btn .star { color: var(--gold); margin-right: 8px; }
+  .big-btn.is-open { background: var(--surface-2); color: var(--ink); border: 1px solid var(--line); }
 
-  /* ===== RATING SECTION ===== */
-  .rating-section {
-    background: var(--paper-warm);
-    padding: clamp(56px, 9vw, 96px) 0;
-    border-bottom: 2px solid var(--ink);
-  }
+  /* RATING SECTION */
+  .rating-section { background: var(--bg); padding: clamp(56px, 8vw, 88px) 0; }
   .rating-section[hidden] { display: none; }
-
-  .rating-section .intro {
-    text-align: center;
-    max-width: 520px;
-    margin: 0 auto 48px;
-  }
+  .rating-section .intro { text-align: center; max-width: 520px; margin: 0 auto 40px; }
+  .rating-section .intro h2 { margin-bottom: 12px; }
 
   .rate-card {
-    background: var(--paper);
-    border: 1px solid var(--rule);
-    padding: clamp(20px, 4vw, 32px);
-    margin-bottom: 18px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    padding: clamp(20px, 3.5vw, 28px);
+    margin-bottom: 16px;
     display: grid;
     grid-template-columns: 56px 1fr;
     gap: 20px;
     align-items: start;
+    border-radius: var(--radius);
   }
   .rate-card .rc-num {
     font-family: var(--mono);
-    font-size: 11px;
-    color: var(--stamp);
-    letter-spacing: 0.18em;
-    padding-top: 8px;
+    font-size: 10px;
+    color: var(--ink-3);
+    letter-spacing: 0.14em;
+    padding-top: 6px;
+    text-transform: uppercase;
   }
   .rate-card .rc-num strong {
     display: block;
     font-family: var(--display);
-    font-size: 32px;
-    font-weight: 500;
+    font-size: 28px;
+    font-weight: 400;
     color: var(--ink);
-    letter-spacing: 0;
-    margin-top: 4px;
+    letter-spacing: -0.01em;
+    margin-top: 2px;
     font-variation-settings: "opsz" 72;
   }
   .rate-card h3 {
     font-family: var(--display);
     font-weight: 500;
     font-size: 22px;
-    margin: 0 0 4px;
-    font-variation-settings: "opsz" 72, "SOFT" 30;
+    margin: 0 0 2px;
+    color: var(--ink);
+    letter-spacing: -0.015em;
+    font-variation-settings: "opsz" 72;
   }
-  .rate-card .rc-cuisine {
-    font-style: italic;
-    font-size: 14px;
-    color: var(--ink-faint);
-    margin: 0 0 16px;
-  }
+  .rate-card .rc-cuisine { font-style: italic; font-size: 13px; color: var(--ink-3); margin: 0 0 14px; }
 
-  .stars-input {
-    display: inline-flex;
-    gap: 4px;
-    margin: 8px 0 14px;
-  }
+  .stars-input { display: inline-flex; gap: 2px; margin: 6px 0 14px; }
   .stars-input button {
     background: none;
     border: none;
     cursor: pointer;
-    font-size: 28px;
+    font-size: 26px;
     line-height: 1;
-    padding: 4px 6px;
-    color: var(--rule);
+    padding: 4px 5px;
+    color: var(--line);
     transition: color 0.1s ease, transform 0.1s ease;
   }
   .stars-input button:hover { transform: scale(1.15); }
-  .stars-input button.on,
-  .stars-input button.on ~ button.preview-on { color: var(--saffron); }
-  .stars-input.has-preview button.on { color: var(--rule); }
-  .stars-input.has-preview button.preview-on { color: var(--saffron); }
+  .stars-input button.on { color: var(--gold); }
+  .stars-input.has-preview button.on { color: var(--line); }
+  .stars-input.has-preview button.preview-on { color: var(--gold); }
 
-  .rate-card input[type=text],
-  .rate-card textarea {
+  .rate-card input[type=text], .rate-card textarea {
     width: 100%;
-    font-family: var(--body);
-    font-size: 15px;
+    font-family: var(--sans);
+    font-size: 14.5px;
     padding: 10px 12px;
-    border: 1px solid var(--rule);
-    background: var(--paper-warm);
+    border: 1px solid var(--line);
+    background: var(--surface);
     color: var(--ink);
-    border-radius: 2px;
+    border-radius: 4px;
     margin-bottom: 10px;
+    transition: border-color 0.15s ease;
   }
-  .rate-card textarea {
-    resize: vertical;
-    min-height: 64px;
-    font-family: var(--body);
-    line-height: 1.5;
-  }
-  .rate-card input:focus, .rate-card textarea:focus {
-    outline: 2px solid var(--saffron);
-    outline-offset: -1px;
-  }
+  .rate-card textarea { resize: vertical; min-height: 64px; line-height: 1.5; }
+  .rate-card input:focus, .rate-card textarea:focus { outline: none; border-color: var(--accent); }
 
   .rate-card .submit {
-    font-family: var(--mono);
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 500;
     background: var(--ink);
-    color: var(--paper);
+    color: var(--surface);
     border: none;
-    padding: 12px 22px;
+    padding: 10px 18px;
+    border-radius: 999px;
     cursor: pointer;
     transition: background 0.15s ease;
   }
-  .rate-card .submit:hover { background: var(--stamp); }
-  .rate-card .submit:disabled { background: var(--ink-faint); cursor: not-allowed; }
+  .rate-card .submit:hover:not(:disabled) { background: var(--accent-deep); }
+  .rate-card .submit:disabled { background: var(--ink-4); cursor: not-allowed; }
 
   .rate-card .status {
     font-family: var(--mono);
     font-size: 11px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
+    letter-spacing: 0.08em;
     margin-left: 12px;
-    color: var(--sage);
+    color: var(--accent);
   }
-  .rate-card .status.error { color: var(--chili); }
+  .rate-card .status.error { color: var(--red); }
 
   .rate-card .recent {
     margin-top: 18px;
-    padding-top: 14px;
-    border-top: 1px dashed var(--rule);
+    padding-top: 16px;
+    border-top: 1px solid var(--line-soft);
     font-size: 14px;
-    color: var(--ink-soft);
+    color: var(--ink-2);
   }
   .rate-card .recent-head {
     font-family: var(--mono);
     font-size: 10px;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: var(--ink-faint);
+    color: var(--ink-3);
     margin-bottom: 8px;
   }
-  .rate-card .recent-item {
-    padding: 6px 0;
-    font-size: 14px;
-    line-height: 1.5;
-  }
+  .rate-card .recent-item { padding: 5px 0; font-size: 14px; line-height: 1.5; }
   .rate-card .recent-item .who { font-weight: 600; color: var(--ink); }
-  .rate-card .recent-item .stars-small { color: var(--saffron); margin-right: 6px; }
+  .rate-card .recent-item .stars-small { color: var(--gold); margin-right: 6px; }
 
   @media (max-width: 540px) {
     .rate-card { grid-template-columns: 1fr; gap: 8px; }
     .rate-card .rc-num { display: flex; gap: 12px; align-items: baseline; padding-top: 0; }
-    .rate-card .rc-num strong { margin-top: 0; font-size: 24px; }
+    .rate-card .rc-num strong { margin-top: 0; font-size: 22px; }
   }
 
-  /* ===== FOOTER ===== */
+  /* FOOTER */
   footer {
     padding: 56px var(--pad) 64px;
     text-align: center;
     font-family: var(--mono);
     font-size: 11px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--ink-faint);
+    letter-spacing: 0.10em;
+    color: var(--ink-3);
     line-height: 1.8;
+    background: var(--surface);
+    border-top: 1px solid var(--line);
   }
-  footer a { color: var(--ink-soft); }
+  footer a { color: var(--ink-2); }
+  footer .verified { color: var(--accent); margin-top: 16px; }
 
-  /* ===== LOADING STATE ===== */
-  .skeleton {
-    background: linear-gradient(90deg, var(--rule-soft) 0%, var(--paper) 50%, var(--rule-soft) 100%);
-    background-size: 200% 100%;
-    animation: shimmer 1.4s infinite;
-    border-radius: 2px;
+  /* LOADING */
+  .stop.is-loading { min-height: 220px; }
+  .stop.is-loading .skel-line {
+    height: 14px;
+    margin: 14px 0;
+    background: var(--line-soft);
+    border-radius: 3px;
+    animation: pulse 1.6s infinite;
   }
-  @keyframes shimmer {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
+  .stop.is-loading .skel-line.lg { height: 36px; width: 55%; }
+  .stop.is-loading .skel-line.sm { width: 30%; }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
   }
-  .stop.is-loading {
-    min-height: 280px;
-  }
-  .stop.is-loading .skeleton-line {
-    height: 16px;
-    margin: 12px 0;
-    background: var(--rule-soft);
-  }
-  .stop.is-loading .skeleton-line.lg { height: 40px; width: 60%; }
 
-  /* fade-in for loaded content */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(8px); }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
     to { opacity: 1; transform: none; }
   }
-  .stop.loaded, .rate-card.loaded { animation: fadeUp 0.4s ease both; }
+  .stop.loaded, .rate-card.loaded { animation: fadeIn 0.35s ease both; }
 </style>
 </head>
 <body>
 
-<!-- ===================== MASTHEAD ===================== -->
 <header class="masthead">
   <div class="wrap">
-    <div class="eyebrow"><b>FIRST ANNUAL</b> · MAY 16 · 2026</div>
+    <div class="eyebrow">First Annual · May 16 · 2026</div>
     <h1 class="title">Jackson Heights<br>&amp; Elmhurst<br><em>Food Crawl</em></h1>
     <div class="cuisines">
-      <span>Bangladeshi</span><span class="dot"></span><span>Pakistani</span><span class="dot"></span><span>Thai</span><span class="dot"></span><span>Tibetan</span><span class="dot"></span><span>Mexican</span>
+      Bangladeshi<span class="dot"></span>Pakistani<span class="dot"></span>Thai<span class="dot"></span>Tibetan<span class="dot"></span>Mexican
     </div>
     <div class="party">Hayley · Anjali · Shashank · Anne · Phong · John</div>
 
     <div class="stats">
       <div><span class="num">6</span><span class="label">People</span></div>
       <div><span class="num">6</span><span class="label">Stops</span></div>
-      <div><span class="num">1.7<small style="font-size:0.5em">mi</small></span><span class="label">Walking</span></div>
-      <div><span class="num">5<small style="font-size:0.5em">h</small></span><span class="label">3:30 – 8:30 PM</span></div>
+      <div><span class="num">1.7<small>mi</small></span><span class="label">Walking</span></div>
+      <div><span class="num">5<small>h</small></span><span class="label">3:30–8:30 PM</span></div>
     </div>
   </div>
 </header>
 
-<!-- ===================== THE ROUTE ===================== -->
+<section class="map-section">
+  <div class="wrap-wide">
+    <div class="map-header">
+      <h2>The Route</h2>
+      <span class="map-meta">East along Roosevelt Ave · ~1.7 miles end-to-end</span>
+    </div>
+    <div id="map" aria-label="Map showing the six food crawl stops"></div>
+  </div>
+</section>
+
 <section>
   <div class="wrap">
-    <h2 class="section-head">
-      <span class="num-mark">§ 01</span>
-      The Route
-    </h2>
+    <div class="section-label">§ 01</div>
+    <h2 class="section-head">Start &amp; end</h2>
     <p class="lede">
-      <strong>Start:</strong> Tong, 73rd St &amp; 37th Ave (3:30 PM). <strong>End:</strong> Birria-Landia, Roosevelt &amp; 78th St. Everything is walkable in one continuous loop. Two seated stops in the middle — Playground and Khampa Kitchen — prevent the crawl from becoming a forced march.
+      <strong>Start:</strong> Tong, 73rd St &amp; 37th Ave at 3:30 PM. <strong>End:</strong> Birria-Landia, Roosevelt &amp; 78th St. Everything walkable in one continuous loop, two seated stops in the middle to prevent the crawl from becoming a forced march.
     </p>
   </div>
 </section>
 
-<!-- ===================== HOW TO RUN ===================== -->
 <section>
   <div class="wrap">
-    <h2 class="section-head">
-      <span class="num-mark">§ 02</span>
-      How to Run This With Six People
-    </h2>
+    <div class="section-label">§ 02</div>
+    <h2 class="section-head">How to run this <em>with six people</em></h2>
     <ul class="tips">
       <li>Order 2–3 dishes per stop, max. The goal is variety, not volume.</li>
       <li>Share everything. Family-style at every stop, no exceptions.</li>
-      <li>One person orders, one person pays — rotate. Avoids 6-way Venmo chaos at every stop.</li>
-      <li>20–30 minutes per stop. If you're sitting longer than that, you're over-ordering.</li>
+      <li>One person orders, one person pays — rotate. Avoids 6-way Venmo chaos.</li>
+      <li>20–30 minutes per stop. If you're sitting longer, you're over-ordering.</li>
       <li><strong>Khao Kang closes at 7 PM.</strong> Arrive there no later than 6:30 PM — that's the timing constraint that drives the whole crawl.</li>
       <li>Bring cash. Tong, Birria-Landia, and some smaller spots are cash-friendly or cash-only.</li>
     </ul>
   </div>
 </section>
 
-<!-- ===================== THE STOPS ===================== -->
 <section class="stops-section">
   <div class="wrap">
-    <h2 class="section-head">
-      <span class="num-mark">§ 03 · SIX STOPS</span>
-      The Crawl
-    </h2>
+    <div class="section-label">§ 03 · Six stops</div>
+    <h2 class="section-head">The crawl</h2>
     <div id="stops-container">
-      <!-- Loading placeholders, replaced by JS -->
-      <div class="stop is-loading"><div class="skeleton-line lg"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div>
-      <div class="stop is-loading"><div class="skeleton-line lg"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div>
+      <div class="stop is-loading"><div class="skel-line sm"></div><div class="skel-line lg"></div><div class="skel-line"></div><div class="skel-line"></div></div>
+      <div class="stop is-loading"><div class="skel-line sm"></div><div class="skel-line lg"></div><div class="skel-line"></div></div>
     </div>
   </div>
 </section>
 
-<!-- ===================== ROUTE SUMMARY ===================== -->
 <section>
   <div class="wrap-wide">
-    <h2 class="section-head">
-      <span class="num-mark">§ 04</span>
-      Route Summary
-    </h2>
+    <div class="section-label">§ 04</div>
+    <h2 class="section-head">Route summary</h2>
     <table class="guide-table">
       <thead>
-        <tr><th class="num-col">#</th><th>Stop</th><th>Cuisine</th><th class="hide-mobile">Must Order</th><th>Style</th></tr>
+        <tr><th class="num-col">#</th><th>Stop</th><th>Cuisine</th><th class="hide-mobile">Must order</th><th>Style</th></tr>
       </thead>
       <tbody>
         <tr><td class="num-col">1</td><td class="name-col">Tong</td><td>Bangladeshi</td><td class="hide-mobile">Fuchka</td><td>Cart</td></tr>
@@ -896,13 +863,10 @@
   </div>
 </section>
 
-<!-- ===================== SUGGESTED TIMING ===================== -->
-<section class="data-section">
+<section>
   <div class="wrap-wide">
-    <h2 class="section-head">
-      <span class="num-mark">§ 05</span>
-      Suggested Timing
-    </h2>
+    <div class="section-label">§ 05</div>
+    <h2 class="section-head">Suggested timing</h2>
     <table class="guide-table">
       <thead><tr><th>Time</th><th>Stop</th><th>Notes</th></tr></thead>
       <tbody>
@@ -911,20 +875,17 @@
         <tr><td class="time-col">5:00 PM</td><td class="name-col">Playground</td><td>First real sit-down. Opens at 3 PM.</td></tr>
         <tr><td class="time-col">5:45 PM</td><td class="name-col">Wander 74th St</td><td>15 min — let the group drift; regroup at 37th Ave.</td></tr>
         <tr><td class="time-col">6:00 PM</td><td class="name-col">Khampa Kitchen</td><td>Quick stop — momos and back out.</td></tr>
-        <tr><td class="time-col">6:30 PM</td><td class="name-col">Khao Kang</td><td><strong style="color:var(--chili)">HARD DEADLINE</strong> — closes at 7.</td></tr>
+        <tr><td class="time-col">6:30 PM</td><td class="name-col">Khao Kang</td><td><strong style="color:var(--red)">HARD DEADLINE</strong> — closes at 7.</td></tr>
         <tr><td class="time-col">7:30 PM</td><td class="name-col">Birria-Landia</td><td>Truck opens at 5. The perfect closer.</td></tr>
       </tbody>
     </table>
   </div>
 </section>
 
-<!-- ===================== STRATEGY ===================== -->
 <section>
   <div class="wrap">
-    <h2 class="section-head">
-      <span class="num-mark">§ 06</span>
-      Crawl Strategy
-    </h2>
+    <div class="section-label">§ 06</div>
+    <h2 class="section-head">Crawl strategy</h2>
 
     <div class="strategy-block">
       <h3>Biggest mistake to avoid</h3>
@@ -957,40 +918,34 @@
   </div>
 </section>
 
-<!-- ===================== RATE THE STOPS CTA ===================== -->
 <section class="rate-cta" id="rate-cta">
   <div class="wrap">
-    <div class="eyebrow">After the crawl ↓</div>
+    <div class="section-label" style="margin-bottom:14px;">After the crawl</div>
     <h2>Did each stop <em>earn its slot?</em></h2>
-    <p>Star-rate every stop, drop a quick note, and see what everyone else thought. Live results from the crawl group.</p>
-    <button id="reveal-rate" class="big-btn">★  Rate the Stops</button>
+    <p>Rate every stop, drop a quick note, and see what everyone else thought. Live results from the crawl group.</p>
+    <button id="reveal-rate" class="big-btn"><span class="star">★</span>Rate the stops</button>
   </div>
 </section>
 
-<!-- ===================== RATING SECTION ===================== -->
 <section class="rating-section" id="rating-section" hidden>
   <div class="wrap">
     <div class="intro">
-      <h2 class="section-head" style="text-align:center;margin-bottom:12px;">
-        <span class="num-mark" style="text-align:center;display:block;">§ 07 · LIVE</span>
-        Your Ratings
-      </h2>
-      <p class="lede" style="margin:0 auto;">One star = regret. Five stars = will return tomorrow. Your name is optional.</p>
+      <div class="section-label" style="text-align:center;">§ 07 · Live</div>
+      <h2 class="section-head" style="text-align:center;">Your ratings</h2>
+      <p class="lede" style="margin:0 auto;text-align:center;">One star = regret. Five stars = will return tomorrow. Your name is optional.</p>
     </div>
-    <div id="rate-cards-container">
-      <!-- Filled by JS -->
-    </div>
+    <div id="rate-cards-container"></div>
   </div>
 </section>
 
-<!-- ===================== FOOTER ===================== -->
 <footer>
   <div>Built on <a href="https://www.netlify.com" target="_blank" rel="noopener">Netlify</a> + <a href="https://supabase.com" target="_blank" rel="noopener">Supabase</a></div>
   <div style="margin-top:8px;">A learning project · May 2026</div>
-  <div style="margin-top:16px;color:var(--sage);">✓ Auto-deploy verified</div>
+  <div class="verified">✓ Auto-deploy verified</div>
 </footer>
 
-<!-- ===================== SCRIPTS ===================== -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
 <script type="module">
   import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4';
 
@@ -998,13 +953,12 @@
   const SUPABASE_KEY = 'sb_publishable_UC3Y9ngaCEpzfonAkM8teQ_1vFvYv4d';
   const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  const $ = (sel, el = document) => el.querySelector(sel);
-  const $$ = (sel, el = document) => [...el.querySelectorAll(sel)];
+  const $ = (s, el = document) => el.querySelector(s);
+  const $$ = (s, el = document) => [...el.querySelectorAll(s)];
 
   const STAR_FILLED = '★';
   const STAR_EMPTY = '☆';
 
-  // Escape user content & content from DB for safe HTML insertion
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
   }[c]));
@@ -1012,31 +966,16 @@
   const mapsLink = (addr) =>
     `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(addr)}`;
 
-  // Render one stop card
   function renderStop(stop) {
-    const must = (stop.must_order || [])
-      .map((m) => `<li>${esc(m)}</li>`)
-      .join('');
-
-    const findIt = stop.find_it
-      ? `<div class="stop-row"><dt>Find it</dt><dd>${esc(stop.find_it)}</dd></div>`
-      : '';
-
-    const whyHere = stop.why_here
-      ? `<div class="stop-row"><dt>Why here</dt><dd>${esc(stop.why_here)}</dd></div>`
-      : '';
-
-    const warning = stop.warning
-      ? `<div class="stop-warning"><span class="icon">⚠ TIMING</span>${esc(stop.warning)}</div>`
-      : '';
-
-    const arriveBy = stop.arrive_by
-      ? ` · Target arrival <strong>${esc(stop.arrive_by)}</strong>`
-      : '';
+    const must = (stop.must_order || []).map((m) => `<li>${esc(m)}</li>`).join('');
+    const findIt = stop.find_it ? `<div class="stop-row"><dt>Find it</dt><dd>${esc(stop.find_it)}</dd></div>` : '';
+    const whyHere = stop.why_here ? `<div class="stop-row"><dt>Why here</dt><dd>${esc(stop.why_here)}</dd></div>` : '';
+    const warning = stop.warning ? `<div class="stop-warning"><span class="icon">⚠ Timing</span>${esc(stop.warning)}</div>` : '';
+    const arriveBy = stop.arrive_by ? `<span class="sep">·</span>Arrive <strong style="color:var(--ink)">${esc(stop.arrive_by)}</strong>` : '';
 
     return `
       <article class="stop loaded" data-stop-id="${stop.id}">
-        <div class="stop-stamp">Stop ${String(stop.order_index).padStart(2, '0')}</div>
+        <div class="stop-tag">Stop ${String(stop.order_index).padStart(2, '0')}</div>
         <div class="stop-head">
           <h3 class="stop-name">${esc(stop.name)}</h3>
           <div class="stop-rating" id="rating-display-${stop.id}">— no ratings yet —</div>
@@ -1057,20 +996,19 @@
     `;
   }
 
-  // The walk interlude between stops
   function renderWalk(toStop) {
     if (!toStop.walk_minutes) return '';
     return `
       <div class="walk">
-        <span class="arrow">↓</span> Walk <span class="min">${toStop.walk_minutes} min</span>
+        <span class="line"></span>Walk <span class="min">${toStop.walk_minutes} min</span><span class="line"></span>
         <span class="walk-dir">${esc(toStop.walk_direction || '')}</span>
       </div>
     `;
   }
 
-  // The 74th St detour callout - injected after stop 3, before stop 4
   const detourHTML = `
     <div class="detour">
+      <span class="detour-tag">★ Optional detour</span>
       <h3>Wander 74th Street</h3>
       <p>Between Playground and Khampa Kitchen, route the group up 74th St between Roosevelt and 37th Ave. This is the densest, most overwhelming-in-the-best-way stretch in Jackson Heights — sari shops, jewelry stores, Bangladeshi grocery markets, paan stalls, Bollywood music spilling onto the sidewalk.</p>
       <p><strong>What you'll see:</strong></p>
@@ -1080,36 +1018,29 @@
         <li>Diversity Plaza (37th Rd) — the pedestrian heart of the neighborhood</li>
         <li>Sugarcane juice carts, paan stalls, Bangladeshi sweets shops</li>
       </ul>
-      <p><strong>How to run it:</strong> Give the group 15 minutes to wander on their own from Roosevelt &amp; 74th up to 37th Ave. Regroup at the 37th Ave corner, then walk east to Khampa Kitchen together. The neighborhood rewards aimlessness more than any other in NYC.</p>
+      <p><strong>How to run it:</strong> Give the group 15 minutes to wander on their own from Roosevelt &amp; 74th up to 37th Ave. Regroup at the 37th Ave corner, then walk east to Khampa Kitchen together.</p>
     </div>
   `;
 
-  // Build a rating card for the rate section
   function renderRateCard(stop) {
     return `
       <article class="rate-card loaded" data-stop-id="${stop.id}">
         <div class="rc-num">
-          STOP
+          Stop
           <strong>${String(stop.order_index).padStart(2, '0')}</strong>
         </div>
         <div>
           <h3>${esc(stop.name)}</h3>
           <p class="rc-cuisine">${esc(stop.cuisine)}</p>
-
           <div class="stars-input" data-stop-id="${stop.id}" role="radiogroup" aria-label="Rate ${esc(stop.name)}">
-            ${[1, 2, 3, 4, 5].map((n) =>
-              `<button type="button" data-val="${n}" aria-label="${n} star${n > 1 ? 's' : ''}">${STAR_EMPTY}</button>`
-            ).join('')}
+            ${[1,2,3,4,5].map(n => `<button type="button" data-val="${n}" aria-label="${n} star${n>1?'s':''}">${STAR_EMPTY}</button>`).join('')}
           </div>
-
           <input type="text" placeholder="Your name (optional)" maxlength="50" class="name-input">
-          <textarea placeholder="A quick note (optional, 500 char max)" maxlength="500" class="comment-input"></textarea>
-
+          <textarea placeholder="A quick note (optional)" maxlength="500" class="comment-input"></textarea>
           <div>
             <button class="submit" type="button" disabled>Submit rating</button>
             <span class="status"></span>
           </div>
-
           <div class="recent" id="recent-${stop.id}" hidden>
             <div class="recent-head">Recent ratings</div>
             <div class="recent-list"></div>
@@ -1119,7 +1050,6 @@
     `;
   }
 
-  // Aggregate ratings per stop
   function aggregate(ratings) {
     const byStop = new Map();
     for (const r of ratings) {
@@ -1128,17 +1058,12 @@
     }
     return byStop;
   }
-
-  function avg(arr) {
-    return arr.reduce((s, r) => s + r.rating, 0) / arr.length;
-  }
-
-  function starsString(n, max = 5) {
+  const avg = (arr) => arr.reduce((s, r) => s + r.rating, 0) / arr.length;
+  const starsString = (n, max = 5) => {
     const full = Math.round(n);
     return STAR_FILLED.repeat(full) + STAR_EMPTY.repeat(max - full);
-  }
+  };
 
-  // Update aggregate display for each stop
   function updateRatingDisplays(byStop) {
     for (const stopId of byStop.keys()) {
       const ratings = byStop.get(stopId);
@@ -1146,10 +1071,9 @@
       const el = document.getElementById(`rating-display-${stopId}`);
       if (el) {
         el.classList.add('has-ratings');
-        el.innerHTML = `<span class="stars">${starsString(a)}</span> · ${a.toFixed(1)} · ${ratings.length} rating${ratings.length === 1 ? '' : 's'}`;
+        el.innerHTML = `<span class="stars">${starsString(a)}</span> ${a.toFixed(1)} · ${ratings.length} rating${ratings.length === 1 ? '' : 's'}`;
       }
 
-      // Update recent list in rate card
       const recentEl = document.getElementById(`recent-${stopId}`);
       if (recentEl) {
         const list = recentEl.querySelector('.recent-list');
@@ -1167,7 +1091,6 @@
     }
   }
 
-  // Wire up the star buttons and submit for one rate card
   function wireRateCard(card) {
     const stopId = parseInt(card.dataset.stopId, 10);
     const starsEl = card.querySelector('.stars-input');
@@ -1176,7 +1099,6 @@
     const statusEl = card.querySelector('.status');
     const nameEl = card.querySelector('.name-input');
     const commentEl = card.querySelector('.comment-input');
-
     let value = 0;
 
     function paint(val, preview = false) {
@@ -1224,9 +1146,42 @@
 
       statusEl.textContent = '✓ Thanks!';
       commentEl.value = '';
-      // Refresh aggregate display
       await loadRatings();
     });
+  }
+
+  function buildMap(stops) {
+    const withCoords = stops.filter(s => s.latitude != null && s.longitude != null);
+    if (!withCoords.length) return;
+
+    const map = L.map('map', { scrollWheelZoom: false, zoomControl: true });
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+      maxZoom: 19,
+    }).addTo(map);
+
+    const path = withCoords.map(s => [s.latitude, s.longitude]);
+    L.polyline(path, {
+      color: '#047857',
+      weight: 3,
+      opacity: 0.55,
+      dashArray: '6, 6',
+    }).addTo(map);
+
+    withCoords.forEach((s) => {
+      const icon = L.divIcon({
+        className: '',
+        html: `<div class="map-marker">${s.order_index}</div>`,
+        iconSize: [32, 32],
+        iconAnchor: [16, 16],
+      });
+      L.marker([s.latitude, s.longitude], { icon })
+        .addTo(map)
+        .bindPopup(`<div class="pop-name">${esc(s.name)}</div><div class="pop-cuisine">${esc(s.cuisine)}</div>`);
+    });
+
+    map.fitBounds(L.latLngBounds(path), { padding: [40, 40] });
   }
 
   async function loadStops() {
@@ -1237,23 +1192,22 @@
 
     if (error || !stops) {
       console.error('Failed to load stops:', error);
-      $('#stops-container').innerHTML = `<p style="text-align:center;color:var(--chili)">Couldn't load stops from the database. Refresh to try again.</p>`;
+      $('#stops-container').innerHTML = `<p style="text-align:center;color:var(--red)">Couldn't load stops from the database. Refresh to try again.</p>`;
       return null;
     }
 
-    // Render the stop cards with walking interludes
     const parts = [];
     stops.forEach((stop, i) => {
       if (i > 0) parts.push(renderWalk(stop));
       parts.push(renderStop(stop));
-      // Inject the 74th St detour after stop 3 (Playground)
       if (stop.order_index === 3) parts.push(detourHTML);
     });
     $('#stops-container').innerHTML = parts.join('');
 
-    // Render rate cards
     $('#rate-cards-container').innerHTML = stops.map(renderRateCard).join('');
     $$('.rate-card').forEach(wireRateCard);
+
+    buildMap(stops);
 
     return stops;
   }
@@ -1263,29 +1217,26 @@
       .from('ratings')
       .select('stop_id, rating, comment, rater_name, created_at')
       .order('created_at', { ascending: false });
-
     if (error) { console.error(error); return; }
     updateRatingDisplays(aggregate(data || []));
   }
 
-  // Toggle the rating section
   $('#reveal-rate').addEventListener('click', () => {
     const sec = $('#rating-section');
     const btn = $('#reveal-rate');
     if (sec.hidden) {
       sec.hidden = false;
-      btn.textContent = '★  Hide ratings';
+      btn.innerHTML = '<span class="star">★</span>Hide ratings';
       btn.classList.add('is-open');
       setTimeout(() => sec.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
     } else {
       sec.hidden = true;
-      btn.textContent = '★  Rate the Stops';
+      btn.innerHTML = '<span class="star">★</span>Rate the stops';
       btn.classList.remove('is-open');
       $('#rate-cta').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   });
 
-  // Boot
   (async () => {
     await loadStops();
     await loadRatings();
